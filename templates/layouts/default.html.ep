@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <META Http-Equiv="Pragma" Content="no-cache">
+    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+    <link href="/assets/css/bootstrap.css" rel="stylesheet">
+    <link rel=stylesheet type="text/css" href="/ssi/main.css" tppabs="main.css">
+    <script language="JavaScript" src="/ssi/klayers.js"></script>
+    <script language="JavaScript" src="/ssi/main.js"></script>
+  </head>
+  <body>
+    
+      <div id="navbar" class="navbar navbar-static">
+          <div class="navbar-inner">
+              <div class="container" style="width: auto;">
+                  <ul class="nav">
+                      <a class="brand" href="/"><img src="/asteroid.png" border=0></a>
+              
+                      <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Главная<b class="caret"></b></a>
+                      <ul class="dropdown-menu">
+                          <li><a id='m_auth' href="/auth">Авторизация</a></li>
+                          <li class="divider"></li>
+                          <li><a id='m_urfin' href="/?gr=5">Урфин (the asterisk commander)</a></li>
+                          <li><a id='m_stat' href="/stat">Статистика</a></li>
+                          <li><a id='m_query' href="/">Запросы</a></li>
+                      </ul>
+                      </li>
+                      <li><a id='m_mon' href="/monitor">Онлайн-монитор</a></li>
+                      <li><a id='m_clients' href="/chapter?id=14">Клиенты</a></li>
+                      <li><a id='m_calls' href="/calls">История вызовов</a></li>
+                  </ul>
+              
+              </div>
+          </div>
+      </div>
+      <script src="/assets/js/jquery.js"></script>
+      <script src="/assets/js/bootstrap-modal.js"></script>
+      <script src="/assets/js/bootstrap-dropdown.js"></script>
+      
+      <%= content %>
+
+  </body>
+</html>

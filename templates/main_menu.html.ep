@@ -1,0 +1,32 @@
+% layout 'default';
+% title 'Main menu';
+%my ($gr,$rv)=('','');
+%my $help_gr=1000; $help_gr=$group+2000 if $group;
+<img src='/img/ico/question.png' title='Помощь' onclick="javascript: ow('/help/?c=<%= $help_gr %>',720,800,0,'помощь');" style="position:absolute;cursor:pointer;right:4px;top:50px;" border=0>
+
+%if (!$group){
+    %for my $i (0 .. $#$result){
+        %if(!$gr){
+            <fieldset><legend><%== $result->[$i][2] %></legend><ul>
+        %}
+        %elsif($gr && $gr ne $result->[$i][2]){
+            </fieldset><fieldset><legend><%== $result->[$i][2] %></legend><ul>
+        %}
+        %#else{
+            <li><A class=plain HREF = "/chapter?a=1&id=<%== $result->[$i][0].$result->[$i][4] %>"><%== $result->[$i][1] %></A></li>
+        %#}
+        %$gr=$result->[$i][2];
+    %}
+    %$rv .= "</ul></fieldset>";
+%} else {
+    <h3 style='color:#777777'>&nbsp;<%== $result->[0][2] %></h3><br>
+	    %for my $i (0 .. $#$result){
+			%my $icon=''; $icon="<img src='$result->[$i][5]'> " if $result->[$i][5];
+			<A class=plain HREF = "/chapter?a=1&id=<%== $result->[$i][0].$result->[$i][4] %>"><%== $icon.$result->[$i][1] %></A></li>
+		%}
+		%if ($result->[0][7]){
+			<%== $result->[0][7] %>
+	        <div id='ud' style='visibility: hidden;right:10px;left:auto;z-index:20;'>loading..</div>
+	        <script language='JavaScript' src='/ssi/subed.js'></script>
+		%}
+%}

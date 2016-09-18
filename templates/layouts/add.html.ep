@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <META Http-Equiv="Pragma" Content="no-cache">
+    <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <%= content %>
+    <hr>
+    <%== $result %>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+% layout 'default';
+% title 'Auth';
+
+% if ($logged_in){
+	<br>
+	<table border=0 cellpadding=2 cellspacing=0 align=center>
+	<tr>
+		<td valign=center align=center>
+		Добро пожаловать, <%= $fio %>! &nbsp;&nbsp;
+		<a href="/auth/?exit=1" onmouseover="javascript: status='Выход';return true;" onmouseout="javascript: status=''">Выход</a>
+		</td>
+	</tr>
+	</table>
+%} else {
+	<form NAME="logi" ACTION="/auth" method="POST"><br>
+		<table border='0' cellspacing='0' cellpadding='0' align=center>
+			<tr>
+				<td valign=top>
+					имя:
+					<INPUT class='field' name='lo' type='text' maxlength=40 size=10 onmouseover="document.forms['logi'].lo.focus();" autofocus></td>
+				<td valign=top>
+					&nbsp;пароль:
+					<INPUT class='field' name='pa' type='password' maxlength=40 size=10 onkeypress="if(event.keyCode==13){submit();}">
+				</td>
+				<td valign=top>
+				&nbsp; <button type='submit' class='btn btn-success'><i class='icon-user icon-white'></i> Вход</button>
+				</td>
+			</tr>
+		</table>
+	</form>
+%}
+<script>
+    //document.getElementById('m_query').style.color='yellow';
+    document.getElementById('m_auth').style.background='#cccccc';
+</script>

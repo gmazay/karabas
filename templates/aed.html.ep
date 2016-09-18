@@ -1,0 +1,137 @@
+% use Karabas::Tmpl;
+% use Data::Dumper;
+% my($id_e,$sc_e,$table_e)=split(/,/,$cp->{editor});
+% my $iwidth = 40; $iwidth = $var->{iwidth} if defined $var->{iwidth};
+% my $iswidth = $iwidth*6;
+
+% my $pic_unlock = '/pic/unl.gif'; my $pic_lock='/pic/loc.gif'; my $pic_close='/pic/cl.gif';
+% $pic_unlock = $var->{pic_unlock} if defined $var->{pic_unlock};
+% $pic_lock = $var->{pic_lock} if defined $var->{pic_lock};
+% $pic_close = $var->{pic_close} if defined $var->{pic_close};
+
+<style type="text/css">
+input,textarea,select,.uneditable-input {
+  width: <%=$iswidth%>px;
+}
+</style>
+
+<form name='ed' action="javascript:get('/write','<%=$var->{auto_increment}%>');">
+ <div  onmousedown="drag(document.getElementById('f2'),event);" ondblclick="lola();" style="cursor: move;">
+ <INPUT name='tab' type='hidden' value='<%=$table_e%>'>
+ <INPUT name='a' type='hidden' value='1'>
+% if ( $params->{i} && $var->{hideradio} ){
+ <INPUT name='quetype' type='radio' value='1' checked style='display:none'>
+ <INPUT name='quetype' type='radio' value='2' style='display:none'>
+% }
+% elsif ( $params->{i} ){
+ <INPUT name='quetype' type='radio' value='1' checked>-переписать 
+ <INPUT name='quetype' type='radio' value='2'>-новая запись
+% }
+% else {
+ <INPUT name='quetype' type='radio' value='1' style='display:none'><INPUT name='quetype' type='radio' value='2' checked style='display:none'>
+ &nbsp;&nbsp;<b>Новая запись</b>
+% }
+<img id='plo' src='<%=$pic_lock%>' title='Lock/Unlock' onclick="javascript:lola();" style="position: absolute; cursor: pointer; right: 25px;" border=0>
+<img src='<%=$pic_close%>' title='Закрыть' onclick="shut();" style="position: absolute; cursor: pointer; right: 2px;" border=0>
+<br><button type='reset' class='btn'>Сброс</button>
+<INPUT name='i' type='hidden' value='<%=$params->{i}%>'>
+<INPUT name='qid' type='hidden' value='<%=$params->{qid}%>'>
+<button type='submit' class='btn btn-primary'><i class='icon-ok icon-white'></i> Записать</button></div>
+
+<table border=0 cellspacing=1 cellpadding=0>
+
+<% for my $i ( 0 .. $#{$result->{names}} ){
+    my $name = $result->{names}->[$i];
+		my $title = $name;
+		$title = $cp->{colnames}->[$i] if ref $cp->{colnames} eq 'ARRAY';
+		#my $title =  $name;
+		$result->{data}->[$i] = '' if ! defined $result->{data}->[$i];
+    my $value = $result->{data}->[$i];
+    my $input_field = '';
+    
+    my $le_i=2;
+    my $c_fl=length($value) || 0;
+    my $c_n; @$c_n = $value =~ /(\n)/g; $c_n = $#$c_n + 1;
+    if( $c_n>2 ){ $le_i=$c_n+1 }; if( $c_n>12 ){ $le_i=12 };
+    if( $c_fl>100 ){ $le_i+=$c_fl/$iwidth };
+    
+    
+    if ( $name eq 'id' ) {                                                                                                    # id
+        $input_field = "<b>$value</b>";
+    }
+    elsif ( ref $var->{text} eq 'HASH' && ( defined $var->{text}->{$name} ||  defined $var->{text}->{$i} ) ) {                # text
+        $input_field = "&nbsp;$value";
+    }
+    elsif ( ref $var->{date} eq 'HASH' && ( defined $var->{date}->{$name} ||  defined $var->{date}->{$i} ) ) {                # date
+        $input_field = "<input class='tcal' type=text name='$name' size='$iwidth' value='$value'>";
+    }
+    elsif ( ref $var->{hide} eq 'HASH' && ( defined $var->{hide}->{$name} ||  defined $var->{hide}->{$i} ) ) {                # hide
+        next;
+    }
+    elsif ( ref $var->{hidinput} eq 'HASH' && ( defined $var->{hidinput}->{$name} ||  defined $var->{hidinput}->{$i} ) ) {    # hideinput
+		    %><tr><td colspan=2><input type=hidden name='<%=$name%>' value='<%=$value%>'></td></tr><%
+        next;
+    }
+    elsif ( defined $var->{select_fields}->{$name} ) {                                                                        # select
+        $input_field = select_field( $var->{select_fields}->{$name}, $name, $value );
+    }
+		elsif ( defined $var->{checkbox}->{$name} ||  defined $var->{checkbox}->{$i} ) {                                          # checkbox
+        my $h = defined $var->{checkbox}->{$i} ? $i:$name;
+        my $thrue=1; my $false=0;
+        if( defined $var->{checkbox}->{$h}->[0] ){
+            $thrue=$var->{checkbox}->{$h}->[0];
+            $false=$var->{checkbox}->{$h}->[1];
+        }
+        $input_field = "<input type=checkbox name='$name' ";
+        if ($value eq $thrue){ $input_field .= "value='$thrue' checked"; }
+        else{ $input_field .= "value='$false'"; }
+        $input_field .= " onclick=\"javascript: if(this.checked){this.value='$thrue';} else{this.value='$false';}\">";
+
+    }
+    elsif( ref $var->{textarea} eq 'HASH' && ( (defined $var->{textarea}->{$name} ||  defined $var->{textarea}->{$i}) )	){   # textarea by vars                                                                                                            # textarea
+        my $ta = defined $var->{textarea}->{$i} ? $var->{textarea}->{$i}:$var->{textarea}->{$name};
+        # Ace Editor #
+        my $ace_editor=''; my $ace_icon='';
+        if( defined $ta->{ace} ){                                                                                            # ace editor
+            my $ace_mode='assembly_x86'; my $ace_height=0;
+            if( defined $ta->{ace}->{mode} ){ $ace_mode = $ta->{ace}->{mode}; $ace_height=$ta->{ace}->{height}; }
+            $ace_editor=qq{<pre id="$name" style="display:none;"></pre>};
+            $ace_icon=qq{<br><img src="/img/ico/cutlery.png" style="cursor:pointer" border=0 title="Ace editor" onclick="javascript: act_editor('$name','$ace_mode','$ace_height')">&nbsp;};
+        }
+        $input_field = "<textarea class='tarea' name='$name' cols=$iwidth rows=$le_i>$value</textarea>$ace_editor";
+				$title .= "&nbsp;$ace_icon";
+    }
+    elsif( $value=~/[<>"'\n]/ || length($value)>$iwidth ){                                                                   # textarea
+        $input_field = "<textarea class='tarea' name='$name' cols=$iwidth rows=$le_i>$value</textarea>";
+    }
+    else {
+        $input_field = qq(<input class=field type=text name="$name" size="$iwidth" value="$value">);
+    }
+    
+%>
+
+    <tr><th align='right'><%== $title %>&nbsp;</th>
+    <td><%== $input_field %></td></tr>
+% }
+
+
+</table></form>
+<br>
+
+% if($cp->{ed_tail}){
+%#		last if !$params->{i} && $cp->{ed_tail} =~ /\$\d/;
+%		$cp->{ed_tail} =~ s/\$(\d)/$result->{data}->[$1]/eg;
+    <br>
+		<%== $cp->{ed_tail} %>
+% }
+
+
+%#<textarea class="tarea" cols="80" rows="11"><%== Dumper( $cp ) %></textarea>
+
+<script>
+    //document.getElementById('m_query').style.color='yellow';
+</script>
+
+% if($var->{error}) {
+   <h5>Achtung! <%= $var->{error} %></h5>
+% }

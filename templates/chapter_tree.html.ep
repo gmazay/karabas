@@ -1,0 +1,252 @@
+% use open qw(:std :utf8);
+% layout 'default';
+% title $cp->{name};
+
+% if ( defined $result->{error} ) {
+    <hr><h4><%== $result->{error} %></h4></hr>
+%
+% }
+
+%my $iii=6; $iii=7 if $cp->{a_insert};
+%my ($i,$j)=(0,0); my $col='#ffffff';
+%my @fls; my $max=1;
+%my $t = +{};#( %kids, %info, %idk, %kidname );
+
+<div id='f2' style="top: 10px; right: 10px; background-color: <%= $var->{ed_bgcolor} %>;z-index:10;">loading..</div>
+<!--[if gte IE 5.5]>
+<![if lt IE 7]>
+<style type="text/css">
+div#f2 {
+  /* IE5.5+/Win - this is more specific than the IE 5.0 version */
+  bottom: auto;
+  left: expression( ( -7 - f2.offsetWidth + ( document.documentElement.clientWidth ? document.documentElement.clientWidth : document.body.clientWidth ) + ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
+  top: expression( ( 7 + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+}
+</style>
+<![endif]>
+<![endif]-->
+
+%#-------------- Editor call ----------------------------------------{
+<%
+if($cp->{editor}){
+    my($id_e,$sc_e)=split(/,/,$cp->{editor});
+    
+    my $fedit; my $udshut='';
+    # для использования ajax редактор должен называться на 'a' #
+    if( $sc_e=~/^a/i ){ $fedit = "put('edit','$cp->{id}',ke);"; }
+    else{ $fedit="ow('/edit/?qid=$cp->{id}&i='+ke,500,400,0,'редактирование')"; }
+    
+    if ( $var->{subeditor} ){
+        $udshut='udShut();';
+%>
+<div id='ud' style="visibility:hidden;z-index:20;">loading..</div>
+<script language="JavaScript" src="/ssi/subed.js"></script>
+
+%    }
+
+
+<script language="JavaScript" src="/ssi/aed.js"></script>
+<script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="/tigra_calendar/tcal.css" />
+<script type="text/javascript" src="/tigra_calendar/tcal.js"></script>
+<script language="JavaScript1.2">
+var ctrl=0;
+var imax=<%== $#{$result->{data}} %>;
+foc=<%=$cp->{focus}%>;
+function edit(i,ke){
+    if(i>=0){
+        id = 's'+i;
+        l_cur=layer(id);
+        if(previ){l_previ=layer(previ); l_previ.style.backgroundColor='#ffffe8';};
+        if (l_cur){l_cur.style.backgroundColor='#FFFF82'};
+    }
+    if(!lol){document.getElementById('f2').style.top=(window.pageYOffset+10)+'px';}
+    <%==$fedit%>
+    previ = id;
+}
+function ned(ke){
+    <%==$fedit%>
+}
+function kd(e){
+    var kc = e.which ? e.which : window.event.keyCode;
+    if(kc==17){ ctrl=1; }
+    else if (kc==38 && ctrl==1 && previ.substr(1,9)>0){
+        if(!previ){ document.getElementById('s0').onclick(); previ='s0'; }
+        else{ document.getElementById('s'+(previ.substr(1,9)-1)).onclick(); }
+    }
+    else if (kc==40 && ctrl==1 && previ.substr(1,9) < imax){
+        if(!previ){ document.getElementById('s0').onclick(); previ='s0'; }
+        else{ document.getElementById('s'+(parseInt(previ.substr(1,9))+1)).onclick(); }
+    }
+    else if (ctrl==1 && kc>48 && kc<58){
+        ctrl=0;
+        if(!previ){ previ='s0'; }
+        foc=parseInt(kc)-48; document.getElementById(previ).onclick();
+    }
+    else if (ctrl==1 && kc==18){
+        ctrl=0;ned(0);
+    }
+    // lock/unlock: ctrl+l or ж
+    else if (ctrl==1 && (kc==186 ||kc==76)){
+        ctrl=0; lola();
+    }
+    else if (kc==27){ shut(); <%==$udshut%> }
+    else if (ctrl==1 && kc==13){
+        ctrl=0; document.forms['ed'].submit();
+    };
+    //alert(foc);
+}
+function ku(e){
+    var kc = e.which ? e.which : window.event.keyCode;
+    if(kc==17){ ctrl=0; };
+}
+if (window.ActiveXObject) {
+    document.body.onkeyup=function(){ku(event)};
+    document.body.onkeydown=function(){kd(event)};
+}
+else{
+    window.onkeyup=ku;
+    window.onkeydown=kd;
+}
+</script>
+%}
+
+
+%#-------------------------------------------------------------------}
+
+
+%	if ( !defined $var->{tree}{kid} || !defined $var->{tree}{parent} || !defined $var->{tree}{kidname} || !defined $var->{tree}{kidinfo} ) {
+%			$var->{tree}{kid}=1; $var->{tree}{parent}=2; $var->{tree}{kidname}=1; $var->{tree}{kidinfo}=3;
+%	}
+%	my $ntchecked='checked' if $params->{nt};
+
+<form name='tt' action='' method=GET>
+<INPUT name='a' type=hidden value=2>
+<INPUT name='id' type=hidden value='<%=$params->{id}%>'>
+<a class='plain' href="javascript:alltoggle(0);" title="развернуть/свернуть все">+/- all</a>
+&nbsp;&nbsp; таблица <input name='nt' value=1 type='checkbox' $ntchecked>
+&nbsp;<INPUT class='button' type='submit' value='Запрос'>
+&nbsp;&nbsp;&nbsp;&nbsp; <font class='head_cha'><%==$cp->{name}%></font>
+</form>
+
+<%
+my $root = $var->{tree}{root};
+my @data = @{$result->{data}};
+
+for $i ( 0 .. $#data ){
+    if( $data[$i][ $var->{tree}{parent} ] eq $data[$i][ $var->{tree}{kid} ] ){
+        %><pre>Error: Object '<%==$data[$i][ $var->{tree}{kid} ] %>' is parent for himself!</pre><%
+        last;
+    }
+    push @{ $t->{kids}{ $data[$i][ $var->{tree}{parent} ] } }, $data[$i][ $var->{tree}{kid} ];
+    my $fnt='#aaaaaa';
+    
+    my $status_style = '';
+    $status_style = q(style="background-color:#ffbbbb") if defined $var->{tree}{status} && $data[$i][$var->{tree}{status}] > 0;
+    
+    $t->{info}{$data[$i][$var->{tree}{kid}]} = " <span id=s$data[$i][0] $status_style>";
+    for $j ( $var->{tree}{kidinfo} .. $#{$data[$i]} ) {
+        next if defined $var->{tree}{status} && $j == $var->{tree}{status};
+        if ( $fnt eq '#aaaaaa' ){ $fnt='#000000'; } else { $fnt='#aaaaaa' }
+        $t->{info}{$data[$i][$var->{tree}{kid}]} .= " <font color=$fnt >$data[$i][$j]</font>";
+    }
+    $t->{info}{$data[$i][$var->{tree}{kid}]} .= " </span>";
+    
+    if($var->{tree}{link}){
+        my $link = $var->{tree}{link};
+        $link =~ s/\$(\d)/$data[$i][$1-1]/g;
+        $t->{info}{ $data[$i][$var->{tree}{kid}] } .= qq( <a href=$link title=$var->{tree}{ltitle} target=ip>$var->{tree}{ltitle}</a> );
+    }
+  
+    $t->{idk}{ $data[$i][$var->{tree}{kid}] } = $data[$i][0];
+    $t->{kidname}{$data[$i][$var->{tree}{kid}]} = $data[$i][$var->{tree}{kidname}];
+}
+
+my $tree_items = "[
+['$t->{kidname}{$root}','javascript:edit($t->{idk}{$root},$t->{idk}{$root});',
+";
+$tree_items .= _mk_tree($root,$t);
+$tree_items .= "	]
+]";
+my $dir='tree'; $dir=$var->{tree}{tdir} if $var->{tree}{tdir};
+%>
+
+<script language="JavaScript" src="/<%=$dir%>/tree.js"></script>
+<script language="JavaScript" src="/<%=$dir%>/tree_tpl.js"></script>
+<script language="JavaScript">
+var TREE_ITEMS = <%==$tree_items%>;
+%==_tree_tpl( $var->{tree}{icons_dir} ) if defined $var->{tree}{icons_dir};
+</script>
+<table cellpadding="5" cellspacing="0" cellpadding="10" border="0" width="100%" id="tb">
+<tr>
+	<td>
+	<script language="JavaScript">
+	<!--//
+		new tree (TREE_ITEMS, TREE_TPL);
+	//-->
+	</script>
+	</td>
+	
+</tr>
+</table>
+
+
+%	if($var->{qdb}){
+    <pre><%==$cp->{qdb}%></pre>
+% }
+
+<%
+sub _mk_tree {
+    my ($root,$t) = @_;
+    my $tree_items = '';
+    if( $t->{kids}{$root} ){
+        foreach my $kid ( @{ $t->{kids}{$root} } ){
+            $tree_items .= "\t\t[";
+            $tree_items .= "'$t->{kidname}{$kid} $t->{info}{$kid}','javascript:edit($t->{idk}{$kid},$t->{idk}{$kid});',";
+            if( $t->{kids}{$kid} ){
+                $tree_items .= _mk_tree($kid,$t);
+            }
+            $tree_items .= "],\n";
+        }
+    }
+    return $tree_items;
+}
+
+sub _tree_tpl {
+  my $dir = shift;
+  return <<___;
+var TREE_TPL = {
+	'target'  : '',	// name of the frame links will be opened in
+							// other possible values are: _blank, _parent, _search, _self and _top
+
+	'icon_e'  : '/tree/$dir/empty.gif', // empty image
+	'icon_l'  : '/tree/$dir/line.gif',  // vertical line
+
+        'icon_32' : '/tree/$dir/base.gif',   // root leaf icon normal
+        'icon_36' : '/tree/$dir/base.gif',   // root leaf icon selected
+	
+	'icon_48' : '/tree/$dir/base.gif',   // root icon normal
+	'icon_52' : '/tree/$dir/base.gif',   // root icon selected
+	'icon_56' : '/tree/$dir/base.gif',   // root icon opened
+	'icon_60' : '/tree/$dir/base.gif',   // root icon selected
+	
+	'icon_16' : '/tree/$dir/folder.gif', // node icon normal
+	'icon_20' : '/tree/$dir/folderopen.gif', // node icon selected
+	'icon_24' : '/tree/$dir/folderopen.gif', // node icon opened
+	'icon_28' : '/tree/$dir/folderopen.gif', // node icon selected opened
+
+	'icon_0'  : '/tree/$dir/page.gif', // leaf icon normal
+	'icon_4'  : '/tree/$dir/page.gif', // leaf icon selected
+	
+	'icon_2'  : '/tree/$dir/joinbottom.gif', // junction for leaf
+	'icon_3'  : '/tree/$dir/join.gif',       // junction for last leaf
+	'icon_18' : '/tree/$dir/plusbottom.gif', // junction for closed node
+	'icon_19' : '/tree/$dir/plus.gif',       // junctioin for last closed node
+	'icon_26' : '/tree/$dir/minusbottom.gif',// junction for opened node
+	'icon_27' : '/tree/$dir/minus.gif'       // junctioin for last opended node
+};
+___
+  
+}
+
+%>

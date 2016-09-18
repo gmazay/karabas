@@ -1,0 +1,16 @@
+% layout 'add';
+% title 'add car';
+<a href='/'>База утилизированных автомобилей</a></br>
+Введите данные:<br>
+  <form name=cars method="POST" action="/wr" ENCtype="multipart/form-data">
+	<table border=0 cellspacing=1>
+		<tr><th>VIN</th><th>Дата изгот.</th><th>Дата утилизации</th><th>Скан ПТС(.jpg)</th><th>&nbsp;</th></tr>
+		<tr>
+			<td><input name="id" type=text></td>
+     			<td><input name="date_begin" type=text placeholder='YYYY-MM-DD'></td>
+     			<td><input name="date_end" type=text placeholder='YYYY-MM-DD'></td>
+     			<td><input type="file" name="pts"></td>
+     			<td><input name="send" type=submit value="Записать"></td>
+		</tr>
+	</table>
+  </form>

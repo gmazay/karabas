@@ -1,0 +1,134 @@
+% use Data::Dumper;
+% use Karabas::Tmpl;
+<form name='<%='es'.$params->{sq_id}%>' action="javascript:sePost('<%=$params->{sq_id}%>','subwr');">
+<INPUT name='a' type=hidden value=1>
+<INPUT name='sq_id' type=hidden value='<%=$params->{sq_id}%>'>
+<INPUT name='qid' type=hidden value='<%=$params->{qid}%>'>
+<INPUT name='rid' type=hidden value='<%=$params->{rid}%>'>
+<INPUT name='i' type=hidden value='<%=$params->{i}%>'>
+%==_print_subtable($params, $result, $var);
+</form>
+
+<%
+sub _print_subtable {
+    my ($params, $s, $var) = @_;
+    #return join ',',@{$s->{inames}};
+    $s->{link}=~s/\$ID/$params->{i}/eg;
+	$s->{link}=~s/\$QID/$params->{qid}/eg;
+
+	$s->{link_delete}=~s/\$ID/$params->{i}/eg;
+	$s->{link_delete}=~s/\$QID/$params->{qid}/eg;
+
+	my @cn = @{$s->{names}};
+	my $str = ''; my $i = 0;
+	my @cnr = @{$s->{inames}};
+	my $tr = 0;
+
+	foreach my $row ( @{$s->{data}} ){
+		$str .= "<tr>";
+		my $lnkd = $s->{'link_delete'};
+		if($lnkd){
+			$lnkd =~ s/\$RID/$row->[0]/g;
+			$lnkd = "<td>$lnkd</td>";
+		}
+		for my $j ( 1 .. $#$row){
+				#print $select_fields[0];
+			if( defined $var->{select_fields}->{$cnr[$j]} ){
+				my $val_by_key = 1;
+				if ( $row->[0] eq $params->{rid} && $tr!=2 ){ $tr = 1; $val_by_key = 0; }
+				my $ag = select_field( $var->{select_fields}->{$cnr[$j]}, $cnr[$j], $row->[$j], $val_by_key ); # 1 - $val_by_key
+				$str .= "<td bgcolor='#ffffff'>$ag</td>";
+				next;
+			}
+
+			if( $row->[0] eq $params->{rid} && $tr != 2 ){
+				if( $row->[$j] =~ /\"/ || $row->[$j] =~ /\n/ || length($row->[$j])>40 || defined $var->{textarea}->{$j} ) {
+					$str .= "<td bgcolor='#ffffff'><textarea class='tarea' name='$cnr[$j]' style='width:99%' rows=2>$row->[$j]</textarea></td>";
+				}
+				elsif( defined $var->{checkbox}->{$j}  ){
+					$str.= "<td bgcolor='#ffffff'><input type=checkbox name='$cnr[$j]' ";
+                    my $thrue=1; my $false=0;
+                    if( defined $var->{checkbox}->{$j}->[0] ){
+                        $thrue=$var->{checkbox}->{$j}->[0];
+                        $false=$var->{checkbox}->{$j}->[1];
+                    }
+                    if ($row->[$j] eq $thrue){ $str .= "value='$thrue' checked"; }
+                    else{ $str .= "value='$false'"; }
+                    $str .= " onclick=\"javascript: if(this.checked){this.value='$thrue';} else{this.value='$false';}\">";
+				}
+				else{
+					$str .= "<td bgcolor='#ffffff'><input class=field type=text name='$cnr[$j]' value='$row->[$j]' style='width:99%'></td>";
+				}
+				$tr = 1;
+			}
+			else{
+				$row->[$j] =~ s/\n/<br>/g;
+				$str .= "<td bgcolor='#ffffff'>$row->[$j]</td>";
+			}
+		}
+		if( $s->{editor} ){
+			if( $row->[0] eq $params->{rid} && $tr != 2 ){
+				$str .= "<td bgcolor='#ffffff'><INPUT name='$cnr[0]' type=hidden value='$row->[0]'>
+                <button type='submit' class='btn btn-primary' title='Записать' onclick=document.forms['es$params->{sq_id}'].submit()><i class='icon-ok icon-white'></i></button></td>$lnkd";
+			}
+			else{
+				my $lnk = $s->{link};
+				$lnk =~ s/\$RID/$row->[0]/g;
+				$str .= "<td bgcolor='#ffffff'>$lnk</td>$lnkd";
+			}
+		}
+		$str .= "</tr>\n";
+		$i++;
+		$tr=2 if $tr==1;
+	}
+	if( $params->{rid} eq '0' ){
+		$str .= "<tr>";
+		for my $j ( 1 .. $#cnr ) {
+            my $row = $s->{data}->[$j];
+            
+			if( defined $var->{text}->{$j} ){
+				$str.="<td bgcolor='#ffffff'>&nbsp;</td>";
+			}
+			elsif( defined  $var->{select_fields}->{$cnr[$j]} ){
+				my $ag = select_field( $var->{select_fields}->{$cnr[$j]}, $cn[$j], $row->[$j]);
+				$str.="<td bgcolor='#ffffff'>$ag</td>";
+				next;
+			}
+			elsif( defined $var->{textarea}->{$j} || defined $var->{textarea}->{$cnr[$j]} ){
+				$str .= "<td bgcolor='#ffffff'><textarea class=tarea name='$cnr[$j]' style='width:99%' rows=2></textarea></td>";
+			}
+			elsif( defined $var->{checkbox}->{$j} || defined $var->{checkbox}->{$cnr[$j]} ){
+				$str .= "<td bgcolor='#ffffff'><input type=checkbox name='$cnr[$j]' ";
+				my $thrue=1; my $false=0;
+                if( defined $var->{checkbox}->{$j}->[0] ){
+                    $thrue=$var->{checkbox}->{$j}->[0];
+                    $false=$var->{checkbox}->{$j}->[1];
+                }
+                if ($row->[$j] eq $thrue){ $str .= "value='$thrue' checked"; }
+                else{ $str .= "value='$false'"; }
+                $str .= " onclick=\"javascript: if(this.checked){this.value='$thrue';} else{this.value='$false';}\">";
+			}
+
+			else{
+				$str .= "<td bgcolor='#ffffff'><input class=field type=text name='$cnr[$j]' value='' style='width:99%'></td>";
+			}
+		}
+		$str .= "<td bgcolor='#ffffff'><INPUT name='$cnr[0]' type=hidden value='0'>
+        <button type='submit' class='btn btn-primary' title='Записать'><i class='icon-ok icon-white'></i></button></td>";
+		$str .= "</tr>\n";
+	}
+
+	my $prestr = '';
+	if( $i || $params->{rid} eq '0' ){
+		$prestr .= "<table  cellspacing=1 border=0 width=100% class='table table-bordered'><tr>";
+		for my $j (1 .. $#cn){ $prestr .= "<th bgcolor='#cccccc'>$cn[$j]</th>";}
+		$prestr .= "<th bgcolor='#cccccc' width=16px>&nbsp;</th>" if $s->{editor};
+		$prestr .= "<th bgcolor='#cccccc' width=16px>&nbsp;</th>" if $s->{link_delete};
+		$prestr .= "</tr>\n";
+		$str .= "</table>";
+	}
+
+	return $prestr.$str;
+}
+
+%>

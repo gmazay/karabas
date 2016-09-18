@@ -1,0 +1,8 @@
+% layout 'default';
+% title 'Ой бай! Мынау не?';
+<br>
+<pre><%== $result %></pre>
+
+<script>
+    //document.getElementById('m_query').style.color='yellow';
+</script>

@@ -1,0 +1,283 @@
+<%
+use Karabas::Tmpl;
+use Data::Dumper;
+my $idh;
+my($id_e,$sc_e,$table_e)=split(/,/,$cp->{editor});
+my $iwidth = 40; $iwidth = $var->{iwidth} if defined $var->{iwidth};
+my $iswidth = $iwidth*6;
+my $width=''; $width="width='".$var->{width}."px'" if $var->{width};
+
+my $pic_unlock = '/pic/unl.gif'; my $pic_lock='/pic/loc.gif'; my $pic_close='/pic/cl.gif';
+$pic_unlock = $var->{pic_unlock} if defined $var->{pic_unlock};
+$pic_lock = $var->{pic_lock} if defined $var->{pic_lock};
+$pic_close = $var->{pic_close} if defined $var->{pic_close};
+
+my $check_form_js = '';
+if( $xep->{check_form_js} ){
+    #<script>function check_form(){ $check_form_js }</script>
+    $check_form_js=qq(onsubmit="javascript:{ $check_form_js }");
+}
+
+my (@zones,%zone_tr);
+my $zone_tr_default = "<tr><th align=right>#NAME&nbsp;</th><td>#VALUE</td></tr>"; my $ztr;
+if ( !$xep->{form_template} ){ $xep->{form_template} = '$0$'; }
+else {
+    foreach ( $xep->{form_template} =~ /\$(\d+)\((.+)\)\$/g ){
+        $zone_tr{$1} = $2;
+    }
+}
+
+
+%>
+
+%#<style type="text/css">
+%#input,textarea,select,.uneditable-input {
+%#    width: <%= $iswidth %>px;
+%#}
+%#</style>
+
+<form name='ed' action="javascript:get('/write','<%=$var->{auto_increment}%>');" <%==$check_form_js%>>
+ <div  onmousedown="drag(document.getElementById('f2'),event);" ondblclick="lola();" style="cursor: move;">
+ <INPUT name='tab' type='hidden' value='<%=$table_e%>'>
+ <INPUT name='a' type='hidden' value='1'>
+% if ( $params->{i} && $var->{hideradio} ){
+ <INPUT name='quetype' type='radio' value='1' checked style='display:none'>
+ <INPUT name='quetype' type='radio' value='2' style='display:none'>
+% }
+% elsif ( $params->{i} ){
+ <INPUT name='quetype' type='radio' value='1' checked>-переписать 
+ <INPUT name='quetype' type='radio' value='2'>-новая запись
+% }
+% else {
+ <INPUT name='quetype' type='radio' value='1' style='display:none'><INPUT name='quetype' type='radio' value='2' checked style='display:none'>
+ &nbsp;&nbsp;<b>Новая запись</b>
+% }
+<img id='plo' src='<%=$pic_lock%>' title='Lock/Unlock' onclick="javascript:lola();" style="position: absolute; cursor: pointer; right: 25px;" border=0>
+<img src='<%=$pic_close%>' title='Закрыть' onclick="shut();" style="position: absolute; cursor: pointer; right: 2px;" border=0>
+<br><button type='reset' class='btn'>Сброс</button>
+<INPUT name='i' type='hidden' value='<%=$params->{i}%>'>
+<INPUT name='qid' type='hidden' value='<%=$params->{qid}%>'>
+<button type='submit' class='btn btn-primary'><i class='icon-ok icon-white'></i> Записать</button></div>
+
+<table border=0 cellspacing=1 cellpadding=0>
+
+<%
+for my $i ( 0 .. $#{$result->{names}} ){
+    my $name = $result->{names}->[$i];
+        my $title = $name;
+        $title = $cp->{colnames}->[$i] if ref $cp->{colnames} eq 'ARRAY';
+        #my $title =  $name;
+	$result->{data}->[$i] = '' if ! defined $result->{data}->[$i];
+    my $value = $result->{data}->[$i];
+    my $input_field = '';
+    
+    my $le_i=2;
+    my $c_fl=length($value) || 0;
+    my $c_n; @$c_n = $value =~ /(\n)/g; $c_n = $#$c_n + 1;
+    if( $c_n>2 ){ $le_i=$c_n+1 }; if( $c_n>12 ){ $le_i=12 };
+    if( $c_fl>100 ){ $le_i+=$c_fl/$iwidth };
+        
+	#my $zone_num = 0; $zone_num = $var->{zone}->{$i} if exists $var->{zone}->{$i};        
+	#$ztr = ( defined $zone_tr{ $var->{zone}->{$i} } ? $zone_tr{ $var->{zone}->{$i} } : $zone_tr_default );
+	my $zone_num = 0; my $ztr = $zone_tr_default;
+	if ( exists $var->{zone}->{$i} ) {
+		$zone_num = $var->{zone}->{$i}; $ztr = $zone_tr{ $var->{zone}->{$i} };
+	}
+
+	my $v_style='';
+	if( defined $var->{value_style}->{$i} ) {                                                                                 # value_style
+		#print $var->{value_style}->{$i};
+		if ( $value =~/\d+/ && $value>0 ){ $var->{value_style}->{$i} =~ s/R\/G/green/; }
+		else { $var->{value_style}->{$i} =~ s/R\/G/red/; }
+		$v_style = 'style="'.$var->{value_style}->{$i}.'"';
+	}
+	if ( defined $var->{placeholder_ed}->{$name} ||  defined $var->{placeholder_ed}->{$i} ){                                  # placeholder_ed
+		my $placeholder = defined $var->{placeholder_ed}->{$name} ? $var->{placeholder_ed}->{$name} : $var->{placeholder_ed}->{$i};
+		$v_style .= " placeholder='$placeholder'";
+	}
+    
+    
+    if ( $i == 0 || $name eq 'id' ) {                                                                                         # id
+        #$input_field = "<b>$value</b>";
+        $ztr =~ s/#NAME/$title/;
+        $ztr =~ s/#VALUE/"<text $v_style>$value<\/text>"/e;
+        $zones[$zone_num] .= $ztr;
+        #$zones[$k] .=  "<tr><th align=right>$colnames[$j]&nbsp;</th><td><b>$ary[$j]</b></td></tr>\n";
+        $idh="<input type=hidden name='$name' value='$value'>";
+    }
+    elsif ( ref $var->{text} eq 'HASH' && ( defined $var->{text}->{$name} ||  defined $var->{text}->{$i} ) ) {                # text
+        $ztr =~ s/#NAME/$title/;
+        $ztr =~ s/#VALUE/"<text $v_style>$value<\/text>"/e;
+        $zones[$zone_num] .= $ztr;
+    }
+    elsif ( ref $var->{date} eq 'HASH' && ( defined $var->{date}->{$name} ||  defined $var->{date}->{$i} ) ) {                # date
+        $zones[$zone_num] .=  "<tr><th align=right>$title&nbsp;</th>";
+        $zones[$zone_num] .= "<td><input class=tcal type=text name='$name' size='$iwidth' value='$value' $v_style></td></tr>\n";
+    }
+    elsif ( ref $var->{hide} eq 'HASH' && ( defined $var->{hide}->{$name} ||  defined $var->{hide}->{$i} ) ) {                # hide
+        next;
+    }
+    elsif ( ref $var->{hidinput} eq 'HASH' && ( defined $var->{hidinput}->{$name} ||  defined $var->{hidinput}->{$i} ) ) {    # hideinput
+        $zones[$zone_num] .=  "<tr><td colspan=2><input type='hidden' name='$name' value='$value'></td></tr>\n";
+    }
+    elsif ( defined $var->{select_fields}->{$name} ) {                                                                        # select
+        $input_field = select_field( $var->{select_fields}->{$name}, $name, $value );
+               
+        $ztr =~s/#NAME/$title/;
+        $ztr =~s/#VALUE/$input_field/;
+        $zones[$zone_num] .= $ztr;
+    }
+    elsif ( defined $var->{checkbox}->{$name} ||  defined $var->{checkbox}->{$i} ) {                                          # checkbox
+        my $h = defined $var->{checkbox}->{$i} ? $i:$name;
+        my $thrue=1; my $false=0;
+        if( defined $var->{checkbox}->{$h}->[0] ){
+            $thrue=$var->{checkbox}->{$h}->[0];
+            $false=$var->{checkbox}->{$h}->[1];
+        }
+        $input_field = "<input type=checkbox name='$name' ";
+        if ($value eq $thrue){ $input_field .= "value='$thrue' checked"; }
+        else{ $input_field .= "value='$false'"; }
+        $input_field .= " onclick=\"javascript: if(this.checked){this.value='$thrue';} else{this.value='$false';}\" $v_style>";
+        
+        $ztr =~s/#NAME/$title/;
+        $ztr =~s/#VALUE/$input_field/;
+        $zones[$zone_num] .= $ztr;
+
+    }
+    elsif ( defined $var->{password}->{$name} ||  defined $var->{password}->{$i} ){                                          # password
+        $ztr =~s/#NAME/$title/;
+        $ztr =~s/#VALUE/"<input class='field' type='password' name='$name' size='$iwidth' value='$value' $v_style>"/e;
+        $zones[$zone_num] .= $ztr;
+    }
+    elsif( ref $var->{textarea} eq 'HASH' && ( (defined $var->{textarea}->{$name} || defined $var->{textarea}->{$i}) ) ){   # textarea by vars                                                                                                            # textarea
+        my $ta = defined $var->{textarea}->{$i} ? $var->{textarea}->{$i}:$var->{textarea}->{$name};
+        # Ace Editor #
+        my $ace_editor=''; my $ace_icon='';
+        if( defined $ta->{ace} ){                                                                                            # ace editor
+            my $ace_mode='assembly_x86'; my $ace_height=0;
+            if( defined $ta->{ace}->{mode} ){ $ace_mode = $ta->{ace}->{mode}; $ace_height=$ta->{ace}->{height}; }
+            $ace_editor=qq{<pre id="$name" style="display:none;"></pre>};
+            $ace_icon=qq{<br><img src="/img/ico/cutlery.png" style="cursor:pointer" border=0 title="Ace editor" onclick="javascript: act_editor('$name','$ace_mode','$ace_height')">&nbsp;};
+        }
+        $zones[$zone_num] .=  "<tr><th align=right>${title}&nbsp;$ace_icon</th><td>
+<textarea class=tarea name=\"$name\" cols=$iwidth rows=$le_i $v_style>$value</textarea>$ace_editor
+</td></tr>\n";
+    }
+    elsif( $value=~/[<>"'\n]/ || length($value)>$iwidth ){                                                                   # textarea
+        $zones[$zone_num] .=  "<tr><th align=right>$title&nbsp;</th><td>
+<textarea class=tarea name=\"$name\" cols=$iwidth rows=$le_i $v_style>$value</textarea>
+</td></tr>\n";
+    }
+    else {
+        $ztr =~s/#NAME/$title/;
+        $ztr =~s/#VALUE/<input class=field type=text name='$name' size='$iwidth' value='$value' $v_style>/;
+        $zones[$zone_num] .= $ztr;
+    }
+}
+$xep->{form_template} =~ s/\$(\d+).*?\$/$zones[$1]/g;
+%>
+<%== $xep->{form_template} %>
+
+
+</table><%==$idh%></form>
+
+% if ( defined $result->{sq} ){
+%    my %sq = _subqueryes_forms( $result->{sq}, $result->{uid}, $params );
+     <table border=0 cellspacing=1 cellpadding=0 <%== $width %>>
+%     foreach  my $j (sort keys %sq) {
+%        if($sq{$j}){    # Moved from NNN
+            <tr><td colspan=2><%== $sq{$j} %>&nbsp;</td></tr>
+%        }
+%     }
+     </table>
+% }
+
+% if($cp->{ed_tail}){
+%#  last if !$params->{i} && $cp->{ed_tail} =~ /\$\d/;
+%   $cp->{ed_tail} =~ s/\$(\d)/$result->{data}->[$1]/eg;
+    <br>
+    <%== $cp->{ed_tail} %>
+% }
+
+
+%#<textarea class="tarea" cols="80" rows="11"><%== Dumper( $var ) %></textarea>
+<br>
+
+<script>
+    //document.getElementById('m_query').style.color='yellow';
+</script>
+
+% if($var->{error}) {
+   <h5>Achtung! <%= $var->{error} %></h5>
+% }
+
+<% #####################################################################################################
+
+sub _subqueryes_forms {
+    my ($sqe, $uid, $params) = @_;
+    my %sq;
+    foreach my $s (@$sqe){
+        my $qid = $s->{query_id};
+        #$qdb=$s->{'query'};
+        #$qdb=~s/\$ID/$_[1]/eg;
+        $s->{'link'}=~s/\$ID/$params->{i}/eg;
+        $s->{'link'}=~s/\$QID/$qid/eg;
+        $s->{'link_show'}=~s/\$ID/$params->{i}/eg;
+        $s->{'link_show'}=~s/\$QID/$qid/eg;
+        $s->{'link_show'}=~s/\$([\.\w\-\(\)]+?)\$/$params->{$1}/eg;
+
+        my $access=2;
+        if ( defined $s->{access} && $s->{access}=~/(?:^|,)0:(\d)/ ){ $access = $1; }
+        if ( defined $s->{access} && $s->{access}=~/(?:^|,)$uid:(\d)/ ){ $access = $1; }
+        if ( $access == 0 ){ next; }
+        if ( $access == 1 ){ $s->{link_show}=~s/<a.+?\/a>//eg; }
+
+        if ( $s->{status}==0 ){ next; }
+        if ( $s->{status}==2 ){
+            #$s->{'link'}=~s/\$RID/'0'/eg;
+            #$s->{'link'}=~s/pencil/'pencil--plus'/eg;
+            $sq{ $s->{position} }.="<fieldset><legend>$s->{link_show} $s->{name}&nbsp; </legend><div id='se$s->{id}'></div></fieldset>";
+            next;
+        }
+
+        my @cn = @{ $s->{names} };
+        my @cd = @{ $s->{data} };
+        #print Dumper $s->{names};
+        my $str=''; my $i=0;
+        foreach my $row ( @{$s->{data}} ){
+            $str.="<tr>";
+            for my $j ( 1 .. $#$row ){
+                #$ary[$i][$j]=$row[$j];
+                $row->[$j] =~ s/\n/<br>/g;
+                $str .= "<td bgcolor='#ffffff'>$row->[$j]</td>";
+            }
+            if($s->{editor} && $access==2){
+                my $lnk = $s->{link};
+                $lnk =~ s/\$RID/$row->[0]/g;
+                $str .= "<td bgcolor='#ffffff'>$lnk</td>";
+            }
+            $str.="</tr>\n";
+            $i++;
+        }
+
+        my $prestr=''; $s->{link}='' if !$s->{editor};
+        #$s->{'link'}=~s/\$RID/'0'/eg;
+        #$s->{'link'}=~s/pencil/'pencil--plus'/eg;
+        $prestr="<fieldset><legend>$s->{link_show} $s->{name}&nbsp; </legend><div id='se$s->{id}'>";
+        if($i){
+            $prestr.="<table  cellspacing=1 border=0 width=100% class='table table-bordered'><tr>";
+            for my $j (1 .. $#cn){ $prestr.="<th bgcolor='#cccccc'>$cn[$j]</th>"; } 
+            $prestr .= "<th bgcolor='#cccccc'width=16px>&nbsp;</th>" if ($s->{editor} && $access==2);
+            $prestr .=" </tr>\n";
+            $str .= "</table>";
+        }
+        $str = $prestr.$str;
+
+        $str .= "</div></fieldset>";
+        $sq{ $s->{position} } .= $str;
+    }
+
+    return %sq;
+    
+}
+%>

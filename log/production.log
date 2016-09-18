@@ -1,0 +1,10 @@
+[Fri Sep 16 23:54:34 2016] [info] Listening at "http://*:3000"
+[Fri Sep 16 23:54:34 2016] [info] Manager 3538 started
+[Fri Sep 16 23:54:34 2016] [info] Creating process id file "/opt/karabas/script/hypnotoad.pid"
+[Fri Sep 16 23:54:48 2016] [error] Error: DBD::mysql::db selectrow_hashref failed: MySQL server has gone away at /opt/karabas/script/../lib/Karabas/Model/Base.pm line 171.
+ Auth query error for mazay
+[Fri Sep 16 23:54:50 2016] [error] Error: DBD::mysql::db selectrow_hashref failed: MySQL server has gone away at /opt/karabas/script/../lib/Karabas/Model/Base.pm line 171.
+ Auth query error for mazay
+[Fri Sep 16 23:54:51 2016] [error] Error: DBD::mysql::db selectrow_hashref failed: MySQL server has gone away at /opt/karabas/script/../lib/Karabas/Model/Base.pm line 171.
+ Auth query error for mazay
+[Fri Sep 16 23:55:21 2016] [info] Manager 3538 stopped

@@ -1,0 +1,324 @@
+% use open qw(:std :utf8);
+% layout 'default';
+% title $cp->{name};
+
+% if ( defined $result->{error} ) {
+    <hr><h4><%== $result->{error} %></h4></hr>
+%
+% }
+
+%my $iii=6; $iii=7 if $cp->{a_insert};
+%my ($i,$j)=(0,0); my $col='#ffffff';
+%my @fls; my $max=1;
+
+<div id='f2' style="top: 10px; right: 10px; background-color: <%= $var->{ed_bgcolor} %>;z-index:10;">loading..</div>
+<!--[if gte IE 5.5]>
+<![if lt IE 7]>
+<style type="text/css">
+div#f2 {
+  /* IE5.5+/Win - this is more specific than the IE 5.0 version */
+  bottom: auto;
+  left: expression( ( -7 - f2.offsetWidth + ( document.documentElement.clientWidth ? document.documentElement.clientWidth : document.body.clientWidth ) + ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
+  top: expression( ( 7 + ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+}
+</style>
+<![endif]>
+<![endif]-->
+
+%#-------------- Editor call ----------------------------------------{
+<%
+if($cp->{editor}){
+    my($id_e,$sc_e)=split(/,/,$cp->{editor});
+    
+    my $fedit; my $udshut='';
+    # для использования ajax редактор должен называться на 'a' #
+    if( $sc_e=~/^a/i ){ $fedit = "put('edit','$cp->{id}',ke);"; }
+    else{ $fedit="ow('/edit/?qid=$cp->{id}&i='+ke,500,400,0,'редактирование')"; }
+    
+    if ( $var->{subeditor} ){
+        $udshut='udShut();';
+%>
+<div id='ud' style="visibility:hidden;z-index:20;">loading..</div>
+<script language="JavaScript" src="/ssi/subed.js"></script>
+
+%    }
+
+
+<script language="JavaScript" src="/ssi/aed.js"></script>
+<script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" type="text/css" href="/tigra_calendar/tcal.css" />
+<script type="text/javascript" src="/tigra_calendar/tcal.js"></script>
+<script language="JavaScript1.2">
+var ctrl=0;
+var imax=<%== $#{$result->{data}} %>;
+foc=<%=$cp->{focus}%>;
+function edit(i,ke){
+    if(i>=0){
+        id = 's'+i;
+        l_cur=layer(id);
+        if(previ){l_previ=layer(previ); l_previ.style.backgroundColor='#ffffe8';};
+        if (l_cur){l_cur.style.backgroundColor='#FFFF82'};
+    }
+    if(!lol){document.getElementById('f2').style.top=(window.pageYOffset+10)+'px';}
+    <%==$fedit%>
+    previ = id;
+}
+function ned(ke){
+    <%==$fedit%>
+}
+function kd(e){
+    var kc = e.which ? e.which : window.event.keyCode;
+    if(kc==17){ ctrl=1; }
+    else if (kc==38 && ctrl==1 && previ.substr(1,9)>0){
+        if(!previ){ document.getElementById('s0').onclick(); previ='s0'; }
+        else{ document.getElementById('s'+(previ.substr(1,9)-1)).onclick(); }
+    }
+    else if (kc==40 && ctrl==1 && previ.substr(1,9) < imax){
+        if(!previ){ document.getElementById('s0').onclick(); previ='s0'; }
+        else{ document.getElementById('s'+(parseInt(previ.substr(1,9))+1)).onclick(); }
+    }
+    else if (ctrl==1 && kc>48 && kc<58){
+        ctrl=0;
+        if(!previ){ previ='s0'; }
+        foc=parseInt(kc)-48; document.getElementById(previ).onclick();
+    }
+    else if (ctrl==1 && kc==18){
+        ctrl=0;ned(0);
+    }
+    // lock/unlock: ctrl+l or ж
+    else if (ctrl==1 && (kc==186 ||kc==76)){
+        ctrl=0; lola();
+    }
+    else if (kc==27){ shut(); <%==$udshut%> }
+    else if (ctrl==1 && kc==13){
+        ctrl=0; document.forms['ed'].submit();
+    };
+    //alert(foc);
+}
+function ku(e){
+    var kc = e.which ? e.which : window.event.keyCode;
+    if(kc==17){ ctrl=0; };
+}
+if (window.ActiveXObject) {
+    document.body.onkeyup=function(){ku(event)};
+    document.body.onkeydown=function(){kd(event)};
+}
+else{
+    window.onkeyup=ku;
+    window.onkeydown=kd;
+}
+</script>
+%}
+
+
+%#-------------------------------------------------------------------}
+
+%if(!$var->{noform}){
+
+    %if( $var->{grmenu} && defined $grmenu->[0]->{id} ){ # Print Group Menu
+        <div align=right><font class='head_cha'><i><%==$cp->{grname}%></i>&nbsp;</font>
+        %foreach my $m (@$grmenu){
+            <A class=plain HREF = "?a=1&id=<%== $m->{id}.$m->{tail} %>"><img src='<%==$m->{icon}%>'> <%==$m->{name}%></A> &nbsp;&nbsp;
+        %}
+        </div>
+    %}
+    
+    <form name='tt' action='' method=GET>
+    <INPUT name='a' type=hidden value=2>
+    <INPUT name='id' type=hidden value='<%=$params->{id}%>'>
+    <INPUT name='o' type=hidden value='<%=$params->{o}%>'>
+    limit: <input type='text' name='limit' maxlength=6 size=4 value='<%=$params->{limit}%>' style='width:40px'>
+        %if($params->{nt}){
+            %my $ntchecked='checked' if $params->{nt};
+            &nbsp; таблица <input name='nt' value=1 type='checkbox' <%= $ntchecked %> >
+        %}
+    <button type='submit' class='btn btn-primary'><i class='icon-ok icon-white'></i> Запрос</button>
+    <button type='button' class='btn'onclick=clea()><i class='icon-ok icon-fire'></i> Очистить</button>
+
+    %if($cp->{a_insert}){
+        &nbsp;&nbsp;<button type='button' class='btn'onclick=ned(0) title='Ctrl+Alt'><i class='icon-ok icon-edit'></i> Новая запись</button>
+    %}
+%}
+
+&nbsp;&nbsp;&nbsp; <font class='head_cha'><%== $cp->{name} %></font>
+
+%if ($var->{help}){
+    <img src='/img/ico/question.png' title='Помощь' onclick="javascript: ow('/help/?c=<%= $cp->{id} %>',720,800,0,'помощь');" style="position:absolute;cursor:pointer;right:4px;top:50px;" border=0>
+%}
+
+<table class='table table-bordered' border=0 cellspacing=1 cellpadding=1><tbody id='tb'>
+<tr>
+%for $j ( 0 .. $#{$result->{names}} ){
+    <th style="cursor:pointer;" onclick=sort('<%=$j%>') ondblclick=dsort('<%=$j%>') id='c<%=$j%>' bgcolor='#cccccc'><%== $result->{names}->[$j] %></th>
+%}
+</tr>
+
+<%
+if($cp->{f_lenghts}){
+    @fls=split(/,/,$cp->{f_lenghts});
+    for $j(0 .. $#fls){ if(!$fls[$j]){$fls[$j]='97%';} else{ $fls[$j]=($fls[$j]*5) . 'px';} }
+}
+else {
+    for $j( 0 .. $#{$result->{names}} ){ $fls[$j]='97%'; }
+}
+%>
+
+%if(!$var->{noform}){
+    <tr bgcolor=#cccccc>
+%    for $j ( 0 .. $#{$result->{names}} ){
+%        $params->{"c$j"}=~s/\"//g if $params->{"c$j"};
+%        my $ph = ''; $ph = "placeholder='".$var->{'placeholder-'.$j}."'" if $var->{"placeholder-$j"};
+
+%        if( defined $var->{inactive}->{$j} ) {                                                             # inactive (no input field)
+            <td>&nbsp;</td>
+%        }
+%        elsif( defined $var->{default}->{$j} ) {                                                           # default (set default value if undef)
+%            $params->{"c$j"} = $var->{default}->{$j} if !$params->{"c$j"};
+            <td><input class='field' type='text' name='c<%=$j%>' style='width:<%= $fls[$j] %>'  value='<%= $params->{"c$j"} %>' ></td>
+%        }
+%        elsif(defined $var->{key2val}->{$j} ) {                                                           # key2val menu
+%     my $input_field = _key2val_menu( $var->{key2val}->{$j}->{data}, "c$j", $params->{"c$j"} );
+            <td><%== $input_field %></td>
+%        }
+%        else{
+            <td><input class=field type=text name='c<%=$j%>' style='width:<%=$fls[$j]%>'  value='<%=$params->{"c$j"}%>' <%==$ph%> ></td>
+%        }
+%    }
+    </tr>
+%}
+
+%	my @sum = (); my @sum_columns = ();	if( exists $cp->{sum} ) { @sum_columns = split( /,\s*/, $cp->{sum} ); }	#--
+
+% for $i ( 0 .. $#{$result->{data}} ) {
+<%
+    my $onclick='';
+    if( $cp->{editor} ){ $onclick="onclick=\"javascript:edit($i,$result->{data}->[$i][0]);\" id='s$i'"; }
+    if( ref $var->{grcol} eq 'HASH' && defined $var->{grcol}->{column} && $i>0 ) {                           # grcol (group by color)
+        if( $result->{data}->[$i][$var->{grcol}->{column}-1] ne $result->{data}->[$i-1][$var->{grcol}->{column}-1] ){
+            if($col eq '#ffffff'){ $col=$var->{grcol}->{color}; }
+            else{ $col='#ffffff'; }
+        }
+    }
+%>
+    <tr bgcolor='<%=$col%>' style=\"cursor:crosshair\" <%==$onclick%>>
+%   for $j ( 0 .. $#{$result->{data}->[0]} ) {
+%       $result->{data}->[$i][$j] = '' if ! defined $result->{data}->[$i][$j];
+%       my $value = $result->{data}->[$i][$j];
+%       if( defined $var->{graph}->{$j} ) {                                                                  # graph
+%           _set_max($j, \$max, $result->{data});
+            <td><img src='/g1.gif' border=0 height=10 width="<%== $value*500/$max %>" text-align=left>&nbsp;<%==$value.' '.$max%></td>
+%       }
+%       elsif( defined $var->{key2val}->{$j} ) {                                                             # key2val
+            <td><%== $var->{key2val}->{$j}->{data}->{$value} || '?' %></td>
+%       }
+%       else {
+            <td><%== $value %></td>
+%       }
+%    }
+     </tr>
+%    if( exists $cp->{sum} ){                                                                                # calc summs
+%			  for my $k ( 0 .. $#sum_columns ) { $sum[ $sum_columns[$k] ] += $result->{data}->[$i][ $sum_columns[$k] ];	}		
+%    }
+% }
+% if( exists $cp->{sum} ){                                                                                   # print summs
+		<tr bgcolor=#cccccc>
+%		for my $j ( 0 .. $#{$result->{data}->[0]} ) {
+			  <th><%=$sum[$j]%></th>
+%		}		
+		</tr>
+% }
+
+</tbody></table>
+
+</tbody></table></form>
+Всего: <%== $#{$result->{data}}+1 %>
+
+% if($var->{error}) {
+   <h4>Achtung: <%= $var->{error} %></h4>
+% }
+
+%	if($var->{qdb}){
+    <pre><%==$cp->{qdb}%></pre>
+% }
+
+% if( $var->{'autoopen_ed'} && scalar @{$result->{data}} == 1 ){
+   <script>edit(0, <%=$result->{data}->[0][0]%>);</script>
+% }
+
+<script>
+function clea(){
+    var i=<%= $iii %>;
+    while (i<document.forms['tt'].elements.length)
+    {document.forms['tt'].elements[i].value=''; i++}
+    document.forms['tt'].elements[<%= $iii %>].focus();
+}
+var prev;
+function sort(i){
+    fi='c'+i;
+    s_prev=layer(prev);
+    s_cur=layer(fi);
+
+    if(prev){s_prev.style.backgroundColor='#cccccc'}
+    s_cur.style.backgroundColor='#FFFF82';
+    document.forms['tt'].o.value=i;
+    prev = fi;
+}
+function dsort(i){
+    fi='c'+i;
+    s_prev=layer(prev);
+    s_cur=layer(fi);
+
+    if(prev){s_prev.style.backgroundColor='#cccccc'}
+    s_cur.style.backgroundColor='#80FF80';
+    document.forms['tt'].o.value='-'+i;
+      prev = fi;
+}
+function init(){
+    if(document.forms['tt'].o.value!=''){
+        if( !document.forms['tt'].o.value.match(/-/) ){
+            //alert(document.forms[1].o.value);
+            fi='c'+document.forms['tt'].o.value;
+            s_prev=layer(fi);
+            s_prev.style.backgroundColor='#FFFF82';
+        }
+        else{
+            fi='c'+ document.forms['tt'].o.value.substr(1);
+            s_prev=layer(fi);
+            s_prev.style.backgroundColor='#80FF80';
+        }
+        prev = fi;
+    }
+}
+
+//document.getElementById('m_query').style.color='yellow';
+document.getElementById('m_query').style.background='#cccccc';
+init();
+</script>
+
+<%
+sub _set_max{
+    my ($j, $max, $data) = @_;
+    return if $$max != 1;
+    
+    for my $i (0 .. $#{$data}) {
+          if ($$max < $data->[$i][$j] ){ $$max = $data->[$i][$j] };
+    }
+}
+
+sub _key2val_menu {
+    my ($data, $name, $value) = @_;
+    my $rv = "<select name='$name' class='field0'><option value=''></option>";
+
+    foreach my $key ( keys %{$data} ){
+        if ($value eq "=$key"){
+            $rv .= "<option selected='selected' value='=$key'>$data->{$key}</option>";
+        }
+        else{
+            $rv .= "<option value='=$key'>$data->{$key}</option>";
+        }
+    }
+    $rv.="</select>";
+    
+    return $rv;
+}
+%>

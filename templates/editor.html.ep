@@ -1,0 +1,4 @@
+% title 'Ой бай! Мынау не?';
+<br>
+<div style='position:absolute; background-color:yellow;padding:10px'><pre><%== $result %></pre><div>
+<br>

@@ -1,0 +1,4 @@
+% foreach (@$result){
+%    s/\n/<br>/g;
+    <td><%==$_%></td>
+% }

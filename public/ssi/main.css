@@ -1,0 +1,289 @@
+body {
+  margin: 2;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  color: #333333;
+  background-color: #ffffff;
+}
+
+fieldset {
+	border:1px solid #bbbbbb;
+	padding:4px;
+}
+
+.table {
+  /*!background-color: transparent;*/
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.table {
+  margin-bottom: 2px;
+}
+.table th,
+.table td {
+  padding: 2px;
+  line-height: 18px;
+  text-align: left;
+  vertical-align: top;
+  border-top: 1px solid #bbbbbb;
+}
+.table th {
+  font-weight: bold;
+}
+.table thead:first-child tr th, .table thead:first-child tr td {
+  border-top: 0;
+}
+.table tbody + tbody {
+  border-top: 2px solid #bbbbbb;
+}
+.table tbody tr:hover td {
+  background-color: #e0f5f5;
+}
+.table-bordered {
+  border: 1px solid #bbbbbb;
+  border-collapse: separate;
+  *border-collapse: collapsed;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+.table-bordered th + th,
+.table-bordered td + td,
+.table-bordered th + td,
+.table-bordered td + th {
+  border-left: 1px solid #bbbbbb;
+}
+.table-bordered thead:first-child tr:first-child th, .table-bordered tbody:first-child tr:first-child th, .table-bordered tbody:first-child tr:first-child td {
+  border-top: 0;
+}
+.table-bordered thead:first-child tr:first-child th:first-child, .table-bordered tbody:first-child tr:first-child td:first-child {
+  -webkit-border-radius: 4px 0 0 0;
+  -moz-border-radius: 4px 0 0 0;
+  border-radius: 4px 0 0 0;
+}
+.table-bordered thead:first-child tr:first-child th:last-child, .table-bordered tbody:first-child tr:first-child td:last-child {
+  -webkit-border-radius: 0 4px 0 0;
+  -moz-border-radius: 0 4px 0 0;
+  border-radius: 0 4px 0 0;
+}
+.table-bordered thead:last-child tr:last-child th:first-child, .table-bordered tbody:last-child tr:last-child td:first-child {
+  -webkit-border-radius: 0 0 0 4px;
+  -moz-border-radius: 0 0 0 4px;
+  border-radius: 0 0 0 4px;
+}
+.table-bordered thead:last-child tr:last-child th:last-child, .table-bordered tbody:last-child tr:last-child td:last-child {
+  -webkit-border-radius: 0 0 4px 0;
+  -moz-border-radius: 0 0 4px 0;
+  border-radius: 0 0 4px 0;
+}
+.table-condensed th,
+.table-condensed td {
+  padding: 4px 5px;
+}
+.table-striped tbody tr:nth-child(odd) td,
+.table-striped tbody tr:nth-child(odd) th {
+  background-color: #f9f9f9;
+}
+
+.field {
+	BACKGROUND-COLOR: #fcfcff; BORDER-BOTTOM: #6e767e 1px solid; BORDER-LEFT: #6e767e 1px solid; BORDER-RIGHT: #6e767e 1px solid; BORDER-TOP: #6e767e 1px solid; FONT-SIZE: 10pt; HEIGHT: 15px
+} 
+.field-s {
+	BACKGROUND-COLOR: #fcfcff; BORDER-BOTTOM: #6e767e 1px solid; BORDER-LEFT: #6e767e 1px solid; BORDER-RIGHT: #6e767e 1px solid; BORDER-TOP: #6e767e 1px solid; FONT-SIZE: 10pt; HEIGHT: 15px;WIDTH:210px
+} 
+.fieldl {
+	BACKGROUND-COLOR: #fcfcff; BORDER-BOTTOM: #6e767e 1px solid; BORDER-LEFT: #6e767e 1px solid; BORDER-RIGHT: #6e767e 1px solid; BORDER-TOP: #6e767e 1px solid; FONT-SIZE: 10pt; HEIGHT: 15px;WIDTH:400px
+} 
+.fieldb {
+	BACKGROUND-COLOR: #fcfcff; BORDER-BOTTOM: red 1px solid; BORDER-LEFT: #6e767e 1px solid; BORDER-RIGHT: #6e767e 1px solid; BORDER-TOP: red 1px solid; FONT-SIZE: 10pt; HEIGHT: 15px
+} 
+.field0 {
+	BACKGROUND-COLOR: #fcfcff; BORDER-BOTTOM: #6e767e 1px solid; BORDER-LEFT: #6e767e 1px solid; BORDER-RIGHT: #6e767e 1px solid; BORDER-TOP: #6e767e 1px solid; FONT-SIZE: 10pt;
+} 
+.field1 {
+	BACKGROUND-COLOR: #fcfcff; FONT-SIZE: 10pt; HEIGHT: 13px
+}
+TEXTAREA {
+	BACKGROUND-COLOR: #fcfcff; BORDER-BOTTOM: #6e767e 1px solid; BORDER-LEFT: #6e767e 1px solid; BORDER-RIGHT: #6e767e 1px solid; BORDER-TOP: #6e767e 1px solid; FONT-SIZE: 10pt;
+} 
+.tarea {
+	BACKGROUND-COLOR: #fcfcff; BORDER-BOTTOM: #6e767e 1px solid; BORDER-LEFT: #6e767e 1px solid; BORDER-RIGHT: #6e767e 1px solid; BORDER-TOP: #6e767e 1px solid; FONT-SIZE: 10pt;
+} 
+.tareal {
+	BACKGROUND-COLOR: #fcfcff; BORDER-BOTTOM: #6e767e 1px solid; BORDER-LEFT: #6e767e 1px solid; BORDER-RIGHT: #6e767e 1px solid; BORDER-TOP: #6e767e 1px solid; FONT-SIZE: 10pt;WIDTH:400px
+} 
+.tareal2 {
+	BACKGROUND-COLOR: #fcfcff; BORDER-BOTTOM: #6e767e 1px solid; BORDER-LEFT: #6e767e 1px solid; BORDER-RIGHT: #6e767e 1px solid; BORDER-TOP: #6e767e 1px solid; FONT-SIZE: 10pt;WIDTH:700px
+} 
+.message {
+	BACKGROUND: #fcfcff; FONT-FAMILY: sans-serif; FONT-SIZE: 10pt
+}
+
+A.topmenu:link {
+	FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: Verdana, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+A.topmenu:visited {
+	FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: Verdana, Helvetica, sans-serif; TEXT-DECORATION: none;
+}
+A.topmenu:hover {
+	FONT-SIZE: 8pt; COLOR: #0000cc; FONT-FAMILY: Verdana, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+A.rightmenu:link {
+	FONT-SIZE: 7pt; COLOR: #555555; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+A.rightmenu:visited {
+	FONT-SIZE: 7pt; COLOR: #555555; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+A.rightmenu:hover {
+	FONT-SIZE: 7pt; COLOR: #0000cc; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+.button1 {
+	BACKGROUND: #dddddd; BORDER-BOTTOM-COLOR: white; BORDER-BOTTOM-WIDTH: 1px; BORDER-LEFT-COLOR: #f0f0f0; BORDER-LEFT-WIDTH: 1px; BORDER-RIGHT-COLOR: #f0f0f0; BORDER-RIGHT-WIDTH: 1px; BORDER-TOP-COLOR: #f0f0f0; BORDER-TOP-WIDTH: 1px; FONT-SIZE: 9pt
+}
+.button {
+	BACKGROUND: #dddddd;
+}
+.buttonb {
+	background-color: #0074cc; color: #ffffff;
+}
+.butt {
+	BACKGROUND: #ffffff; BORDER-BOTTOM-COLOR: white; BORDER-BOTTOM-WIDTH: 0px; BORDER-LEFT-COLOR: white; BORDER-LEFT-WIDTH: 0px; BORDER-RIGHT-COLOR: white; BORDER-RIGHT-WIDTH: 0px;  BORDER-TOP-WIDTH: 0px; FONT-SIZE: 10pt
+}
+.check {
+	FONT-FAMILY: sans-serif; FONT-SIZE: 10pt; margin-bottom:0pt
+}
+.select {
+	FONT-SIZE: 10pt;
+}
+.tbl {
+	border-color: #bbbbbb;
+	border-collapse: collapse;
+}
+.smt {
+	font-size:17px;
+	border-collapse: collapse;
+}
+.btn1 {
+    background-image: url("/img/but_2.gif");
+    background-repeat: no-repeat;
+    border: 0px;
+    color: #000000;
+    cursor: pointer;
+    font-family: Verdana, sans-serif;
+    font-size: 11px;
+    height: 26px;
+    text-align: center;
+    width: 162px;
+}
+.btn2 {
+    background-image: url("/img/but_3.gif");
+    background-repeat: no-repeat;
+    border: 0px;
+    color: #000000;
+    cursor: pointer;
+    font-family: Verdana, sans-serif;
+    font-size: 11px;
+    height: 26px;
+    text-align: center;
+    width: 97px;
+}
+.butt1 {
+	background-color: #eeeeee;
+	border-width:1px;font-size: 8pt;
+	font-family: Helvetica, Tahoma, Arial;
+	color: #000000;
+}
+.fo1 {
+	FONT-SIZE: 8pt; COLOR: #00fff0; FONT-FAMILY: Verdana, Helvetica, sans-serif
+}
+.head_cha {
+	FONT-SIZE: 11pt; COLOR: #777777; FONT-FAMILY: Verdana, Helvetica, sans-serif; text-align: center;
+}
+.head_cht {
+	FONT-SIZE: 11pt; COLOR: #777777; FONT-FAMILY: Verdana, Helvetica, sans-serif;
+}
+.head_art {
+	FONT-SIZE: 11pt; COLOR: #660000; FONT-FAMILY: Verdana, Helvetica, sans-serif;
+}
+.tdh {
+	FONT-SIZE: 10pt; BACKGROUND-COLOR: #cccccc; COLOR: #000099; FONT-FAMILY: Verdana, Helvetica, sans-serif; text-align: left; cursor: pointer;
+}
+
+.b_act {
+	BORDER-LEFT: #cccccc 1px dashed; BORDER-RIGHT: #cccccc 1px dashed; BORDER-TOP: #cccccc 1px dashed;  BORDER-BOTTOM: #ffffff 1px dashed; FONT-SIZE: 10pt; HEIGHT: 20px; text-align: center;
+} 
+.b_noact {
+	BACKGROUND-COLOR: #eeedef; BORDER-LEFT: #cccccc 1px dashed; BORDER-RIGHT: #cccccc 1px dashed; BORDER-TOP: #cccccc 1px dashed;  BORDER-BOTTOM: #cccccc 1px dashed; FONT-SIZE: 10pt; HEIGHT: 16px; text-align: center;
+} 
+.b_space {
+	 BORDER-RIGHT: #cccccc 1px dashed; BORDER-TOP: #ffffff 1px dashed;  BORDER-BOTTOM: #cccccc 1px dashed; HEIGHT: 16px; width: 5px;
+} 
+.b_spb {
+	BORDER-RIGHT: #ffffff 1px dashed; BORDER-TOP: #ffffff 1px dashed;  BORDER-BOTTOM: #cccccc 1px dashed; HEIGHT: 16px; width: 5px;
+}
+
+
+.forone {
+	FONT-SIZE: 8pt; COLOR: #aaaaaa; FONT-FAMILY: Verdana, Helvetica, sans-serif; FONT-STYLE: italic;
+}
+.foroneg {
+	FONT-SIZE: 8pt; COLOR: green; FONT-FAMILY: Verdana, Helvetica, sans-serif; FONT-STYLE: italic;
+}
+.editor_button {
+	cursor:pointer;
+	float:left;
+}
+.editor_buttoncl {
+	border-left:1px solid #BBBBBB;
+	border-right:1px solid #BBBBBB;
+	cursor:pointer;
+	float:left;
+	padding-left:1px;
+	padding-right:1px;
+}
+.editbclose {
+	cursor:pointer;
+	float:right;
+}
+.ul0 {
+	margin-left:0pt; padding-left:1pt;
+}
+
+CODE {
+	FONT-SIZE: 9pt; COLOR: #005500; FONT-FAMILY: courier;
+}
+PRE {
+	FONT-SIZE: 8pt; COLOR: #005500;
+}
+#f2{
+ position: fixed;
+ top: 10px;
+ right: 10px;
+ background-color: #ffffdd;
+ padding:4px;
+ border:1px solid #BBBBBB;
+ visibility: hidden;
+	-moz-box-shadow: 3px 3px 4px silver;
+	-webkit-box-shadow: 3px 3px 4px silver;
+	box-shadow: 3px 3px 4px silver;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='silver')";
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='silver');
+}
+td > div#f2 {
+  position: absolute;
+}
+#ud{
+ position: absolute;
+ top: expression( ( document.documentElement.scrollTop +10 ) + 'px' );
+ left: 10px;
+ background-color: #ddffff;
+ padding:4px;
+ border:1px solid #BBBBBB;
+ visibility: hidden;
+	-moz-box-shadow: 3px 3px 4px silver;
+	-webkit-box-shadow: 3px 3px 4px silver;
+	box-shadow: 3px 3px 4px silver;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='silver')";
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=4, Direction=135, Color='silver');
+}
