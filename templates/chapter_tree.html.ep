@@ -49,9 +49,9 @@ if($cp->{editor}){
 <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
 <link rel="stylesheet" type="text/css" href="/tigra_calendar/tcal.css" />
 <script type="text/javascript" src="/tigra_calendar/tcal.js"></script>
-<script language="JavaScript1.2">
+<script language="JavaScript">
 var ctrl=0;
-var imax=<%== $#{$result->{data}} %>;
+var imax=<%== $result->{max_id}+1 %>;
 foc=<%=$cp->{focus}%>;
 function edit(i,ke){
     if(i>=0){
@@ -142,9 +142,9 @@ for $i ( 0 .. $#data ){
     my $fnt='#aaaaaa';
     
     my $status_style = '';
-    $status_style = q(style="background-color:#ffbbbb") if defined $var->{tree}{status} && $data[$i][$var->{tree}{status}] > 0;
+    $status_style = q(color=red) if defined $var->{tree}{status} && $data[$i][$var->{tree}{status}] > 0;
     
-    $t->{info}{$data[$i][$var->{tree}{kid}]} = " <span id=s$data[$i][0] $status_style>";
+    $t->{info}{$data[$i][$var->{tree}{kid}]} = " <span id=s$data[$i][0]";
     for $j ( $var->{tree}{kidinfo} .. $#{$data[$i]} ) {
         next if defined $var->{tree}{status} && $j == $var->{tree}{status};
         if ( $fnt eq '#aaaaaa' ){ $fnt='#000000'; } else { $fnt='#aaaaaa' }
@@ -160,10 +160,11 @@ for $i ( 0 .. $#data ){
   
     $t->{idk}{ $data[$i][$var->{tree}{kid}] } = $data[$i][0];
     $t->{kidname}{$data[$i][$var->{tree}{kid}]} = $data[$i][$var->{tree}{kidname}];
+    $t->{kidname}{$data[$i][$var->{tree}{kid}]} = "<font $status_style>$data[$i][$var->{tree}{kidname}]</font>" if $status_style;
 }
 
 my $tree_items = "[
-['$t->{kidname}{$root}','javascript:edit($t->{idk}{$root},$t->{idk}{$root});',
+['$t->{kidname}{$root} $t->{info}{$root}','javascript:edit($t->{idk}{$root},$t->{idk}{$root});',
 ";
 $tree_items .= _mk_tree($root,$t);
 $tree_items .= "	]

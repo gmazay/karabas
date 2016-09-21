@@ -77,7 +77,7 @@ sub write {
                                                       dsn        => $cp->{dsn},
                                                       log        => $log
                                                     );
-
+        if ($var->{debug} || $log_str =~/^ABORT/){ $c->err( $log_str ); return; }
         $i_id = $params->{i};
     }
     else {
@@ -95,8 +95,7 @@ sub write {
                                                       log        => $log
                                                     );
         
-
-        #print "$i_id---i_id--------------\nlog-- $log_str ----\n"
+        if ($var->{debug} || $log_str =~/^ABORT/){ $c->err( $log_str ); return; }
     }
     
     my $new_row = $c->model($cp->{dsn})->get_qdb_row_array(

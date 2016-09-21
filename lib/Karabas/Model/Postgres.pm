@@ -16,15 +16,21 @@ sub db_connect {
 		    { RaiseError => 1, pg_enable_utf8 => 1, ShowErrorStatement => 1, InactiveDestroy => 1 }
 		);
 	};
-    print "Error conect: ".$@ if $@;
+    $self->app->log->error( "Connection attempt failed: ".$@ ) if $@;
 	return $dbh;
 }
 
 sub get_auto_increment {
     my ($self, $table, $dsn) = @_;
 	my $ai;
-	eval { $ai = $self->app->dbi($dsn)->selectrow_array( "select last_value from auto_id_$table" ); };
-	print $@ if $@;
+	# make autoincrement by auto_id_$table sequence:
+	# CREATE SEQUENCE auto_id_$table ;
+    # CREATE TABLE $table  (
+    #   id int NOT NULL DEFAULT nextval('auto_id_$table '), ....);
+	# update sequence after populate table: SELECT setval('auto_id_$table', max(id)) FROM $table;
+	eval { $ai = $self->app->dbi($dsn)->selectrow_array( "select last_value+1 from auto_id_$table" ); };	
+	#eval { $ai = $self->app->dbi($dsn)->selectrow_array( "select id+1 from $table order by id desc limit 1" ); };
+	$self->app->log->error($@) if $@;
 	return $ai;
 }
 

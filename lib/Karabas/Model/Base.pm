@@ -122,8 +122,12 @@ sub get_chapter_data {
         $sth->execute;
         $rv->{names} = $sth->{NAME};
         foreach (@{$rv->{names}}) { utf8::decode($_); }
-        while (@row = $sth->fetchrow_array)
-            { for $j ( 0 .. $#row){ $rv->{data}->[$i][$j] = $row[$j]; } $i++; }
+        $rv->{max_id} = 0;
+        while (@row = $sth->fetchrow_array) {
+            for $j ( 0 .. $#row){ $rv->{data}->[$i][$j] = $row[$j]; }
+            $rv->{max_id} = $rv->{data}->[$i][0] if $rv->{max_id} < $rv->{data}->[$i][0] ;
+            $i++;
+        }
         $sth->finish;
     };
     if($@){
@@ -270,10 +274,11 @@ sub get_qdb_row_array {
 sub write_log {
     my ($self, %args) = @_;
     my ($log_table, $log_str, $i_id, $qid, $uid) = @args{ qw/log_table log_str i_id qid uid/ };
+    $i_id = 0 if !defined $i_id;
     
     my $qdb = "INSERT INTO $log_table (qid,uid,rec_id,record) VALUES (?,?,?,?)";
-    $self->app->dbi->do($qdb, undef, $qid, $uid, $i_id, $log_str) || die $self->app->dbi->errstr;
-    #print "$qdb -- ($qid, $uid, $i_id, $log_str)\n";
+    #print "$qdb -+- ($qid, $uid, $i_id, $log_str)\n";
+    $self->app->dbi->do($qdb, undef, $qid, $uid, $i_id, $log_str);
     
 }
 
