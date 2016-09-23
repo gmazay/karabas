@@ -12,10 +12,6 @@ setlocale(LC_CTYPE, 'ru_RU.UTF8');
 
 sub startup {
     my $self = shift;
-    $self->secrets(['RVFtfvgfgfvh23dbjhg238e2nHJHNh-8=738FRF'.'ValiD62gh4bvrj374387bJBJY7GJHBNB9894-RFRE=0']);
-    $self->sessions->cookie_name('kar');
-    #$self->sessions->cookie_path('/is');
-    $self->sessions->default_expiration(3600);
   
     my $cfg = $self->plugin( 'Config' => {file => 'etc/karabas.conf'} );
     $self->helper(
@@ -24,6 +20,11 @@ sub startup {
             return $cfg;
         }
     );
+    
+    $self->secrets(['RVFtfvgfgfvh23dbjhg238e2nHJHNh-8=738FRF'.'ValiD62gh4bvrj374387bJBJY7GJHBNB9894-RFRE=0']);
+    $self->sessions->cookie_name('kar');
+    #$self->sessions->cookie_path('/is');
+    $self->sessions->default_expiration($cfg->{session_expiration});
     
     my $log = Mojo::Log->new();
     $log->path( $cfg->{logger_path} ); $log->level( $cfg->{logger_level} );
