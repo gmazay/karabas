@@ -29,7 +29,7 @@ sub edit {
     $var->{auto_increment} = $c->model($cp->{dsn})->get_auto_increment($table, $cp->{dsn});
     
     my $data = $c->model($cp->{dsn})->get_table_row( $table, $key_column, $params->{i}, $cp->{dsn} );
-    if(defined $data->{error}){ $c->achtung($data->{error}); return; }
+    if(defined $data->{error}){ $c->err($data->{error}); return; }
 
     
     $c->stash(params => $params);   
@@ -77,7 +77,7 @@ sub write {
                                                       dsn        => $cp->{dsn},
                                                       log        => $log
                                                     );
-        if ($var->{debug} || $log_str =~/^ABORT/){ $c->err( $log_str ); return; }
+        if ($var->{debug} || $log_str =~/^ABORT/){ $c->err( $log_str, 1 ); return; }
         $i_id = $params->{i};
     }
     else {
@@ -95,7 +95,7 @@ sub write {
                                                       log        => $log
                                                     );
         
-        if ($var->{debug} || $log_str =~/^ABORT/){ $c->err( $log_str ); return; }
+        if ($var->{debug} || $log_str =~/^ABORT/){ $c->err( $log_str, 1 ); return; }
     }
     
     my $new_row = $c->model($cp->{dsn})->get_qdb_row_array(

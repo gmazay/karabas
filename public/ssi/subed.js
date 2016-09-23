@@ -3,9 +3,6 @@
 var http_request = false;
 var target='f2';
 
-function se() {
-   alert('afefwefwf');
-}
 
 function udRequest(url, parameters) {
    http_request = false;
@@ -30,7 +27,7 @@ function udRequest(url, parameters) {
       return false;
    }
    
-   http_request.onreadystatechange = udAlert;
+   http_request.onreadystatechange = udShow;
    http_request.open('POST', url, true);
    http_request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
    http_request.setRequestHeader("Content-length", parameters.length);
@@ -38,7 +35,7 @@ function udRequest(url, parameters) {
    http_request.send(parameters);
 }
 
-function udAlert() {
+function udShow() {
    if (http_request.readyState == 4) {
       if (http_request.status == 200) {
          //alert(http_request.responseText);
@@ -57,7 +54,7 @@ function sed(sq_id,qid,i,sc_e,rid) {
    udRequest('/'+sc_e, poststr);
 }
 
-function xed(tgt,sc_e,poststr,flt) {
+function xxed(tgt,sc_e,poststr,flt) {
    //alert(poststr);
    target=tgt;
    document.getElementById(target).style.top=(document.documentElement.scrollTop+32)+'px';
@@ -66,7 +63,8 @@ function xed(tgt,sc_e,poststr,flt) {
       flt = prompt("Filter : ", "");
       poststr +='&flt='+flt;
    }
-   udRequest('/cgi-bin/'+sc_e+'.pl', poststr);
+   poststr = 'edn='+sc_e+'&'+poststr;
+   udRequest('/xed', poststr);
 }
 
 function slook(sq_id,qid,i,sc_e,rid,t,pic1,pic2) {
@@ -88,7 +86,7 @@ function ud(uid) {
    document.getElementById('ud').style.top=(document.documentElement.scrollTop+32)+'px';
    document.getElementById('ud').style.visibility="visible";
    var poststr = "uid="+uid;
-   udRequest('/cgi-bin/user_details.pl', poststr,'ud');
+   udRequest('/user_details', poststr,'ud');
 }
 
 function udShut() {

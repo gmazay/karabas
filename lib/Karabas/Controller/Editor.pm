@@ -84,8 +84,18 @@ sub subwrite {
     $c->editor($ed_name)->write($c, $params, $cp, $data->[0]);
 }
 
+sub xedit {
+	my $c = shift;
+    unless ( defined $c->session('id') ){ $c->redirect_to('auth'); return; }
+    my $params = $c->req->params->to_hash;
+    my $ed_name = $params->{edn};
+    if( defined $ed_name && ! grep( $ed_name eq $_, @{$c->cfg->{editors}} ) ){ $c->err("Editor '$ed_name' is not available. Please, check config."); return; }
+    $c->editor($ed_name)->edit($c, $params);
+}
+
 sub err {
-    my ($c, $message) = @_;
+    my ($c, $message, $abs) = @_;
+	$c->stash(abs => $abs);
 	$c->stash(result => $message);
 	$c->render('editor');
 }

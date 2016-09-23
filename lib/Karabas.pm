@@ -76,6 +76,7 @@ sub startup {
     $r->post('/write')->to('editor#wr');
     $r->any('/subed')->to('editor#subedit');
     $r->post('/subwr')->to('editor#subwrite');
+    $r->any('/xed')->to('editor#xedit');
     
     $r->get('/*')->to('main#achtung');
 }

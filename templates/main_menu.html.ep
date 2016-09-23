@@ -2,7 +2,7 @@
 % title 'Main menu';
 %my ($gr,$rv)=('','');
 %my $help_gr=1000; $help_gr=$group+2000 if $group;
-<img src='/img/ico/question.png' title='Помощь' onclick="javascript: ow('/help/?c=<%= $help_gr %>',720,800,0,'помощь');" style="position:absolute;cursor:pointer;right:4px;top:50px;" border=0>
+<img src='/img/ico/question.png' title='Помощь' onclick="javascript: xed('ud','Help','id=<%= $help_gr %>');" style="position:absolute;cursor:pointer;right:4px;top:50px;" border=0>
 
 %if (!$group){
     %for my $i (0 .. $#$result){
@@ -26,7 +26,7 @@
 		%}
 		%if ($result->[0][7]){
 			<%== $result->[0][7] %>
-	        <div id='ud' style='visibility: hidden;right:10px;left:auto;z-index:20;'>loading..</div>
 	        <script language='JavaScript' src='/ssi/subed.js'></script>
 		%}
 %}
+<div id='ud' style='visibility: hidden;right:10px;left:auto;z-index:20;'>loading..</div>

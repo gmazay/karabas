@@ -35,13 +35,13 @@ if($cp->{editor}){
     if( $sc_e=~/^a/i ){ $fedit = "put('edit','$cp->{id}',ke);"; }
     else{ $fedit="ow('/edit/?qid=$cp->{id}&i='+ke,500,400,0,'редактирование')"; }
     
-    if ( $var->{subeditor} ){
+#    if ( $var->{subeditor} ){
         $udshut='udShut();';
 %>
 <div id='ud' style="visibility:hidden;z-index:20;">loading..</div>
 <script language="JavaScript" src="/ssi/subed.js"></script>
 
-%    }
+%#    }
 
 
 <script language="JavaScript" src="/ssi/aed.js"></script>
@@ -143,7 +143,8 @@ else{
 &nbsp;&nbsp;&nbsp; <font class='head_cha'><%== $cp->{name} %></font>
 
 %if ($var->{help}){
-    <img src='/img/ico/question.png' title='Помощь' onclick="javascript: ow('/help/?c=<%= $cp->{id} %>',720,800,0,'помощь');" style="position:absolute;cursor:pointer;right:4px;top:50px;" border=0>
+%   my $help_id = $var->{help}>1 ? $var->{help} : $cp->{id};
+    <img src='/img/ico/question.png' title='Помощь' onclick="javascript: xed('ud','Help','id=<%= $help_id %>');" style="position:absolute;cursor:pointer;right:4px;top:50px;" border=0>
 %}
 
 <table class='table table-bordered' border=0 cellspacing=1 cellpadding=1><tbody id='tb'>
@@ -216,11 +217,11 @@ else {
 %       }
 %    }
      </tr>
-%    if( exists $cp->{sum} ){                                                                                # calc summs
+%    if( $cp->{sum} ){                                                                                       # calc summs
 %			  for my $k ( 0 .. $#sum_columns ) { $sum[ $sum_columns[$k] ] += $result->{data}->[$i][ $sum_columns[$k] ];	}		
 %    }
 % }
-% if( exists $cp->{sum} ){                                                                                   # print summs
+% if( $cp->{sum} ){                                                                                          # print summs
 		<tr bgcolor=#cccccc>
 %		for my $j ( 0 .. $#{$result->{data}->[0]} ) {
 			  <th><%=$sum[$j]%></th>
@@ -258,9 +259,19 @@ function sort(i){
     s_prev=layer(prev);
     s_cur=layer(fi);
 
-    if(prev){s_prev.style.backgroundColor='#cccccc'}
-    s_cur.style.backgroundColor='#FFFF82';
-    document.forms['tt'].o.value=i;
+    if(prev){
+      s_prev.style.backgroundColor='#cccccc';
+      document.getElementById(prev).innerHTML = document.getElementById(prev).innerHTML.substring(1);
+    }
+    if(prev == fi && document.forms['tt'].o.value==i){
+      s_cur.style.backgroundColor='#80FF80';
+      document.getElementById(fi).innerHTML = '&uarr;'+document.getElementById(fi).innerHTML;
+      document.forms['tt'].o.value='-'+i;
+    } else {
+      s_cur.style.backgroundColor='#FFFF82';
+      document.getElementById(fi).innerHTML = '&darr;'+document.getElementById(fi).innerHTML;
+      document.forms['tt'].o.value=i;
+    }
     prev = fi;
 }
 function dsort(i){
@@ -280,11 +291,13 @@ function init(){
             fi='c'+document.forms['tt'].o.value;
             s_prev=layer(fi);
             s_prev.style.backgroundColor='#FFFF82';
+            document.getElementById(fi).innerHTML = '&darr;'+document.getElementById(fi).innerHTML;
         }
         else{
             fi='c'+ document.forms['tt'].o.value.substr(1);
             s_prev=layer(fi);
             s_prev.style.backgroundColor='#80FF80';
+            document.getElementById(fi).innerHTML = '&uarr;'+document.getElementById(fi).innerHTML;
         }
         prev = fi;
     }

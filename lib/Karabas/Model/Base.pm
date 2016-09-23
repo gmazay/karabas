@@ -277,7 +277,6 @@ sub write_log {
     $i_id = 0 if !defined $i_id;
     
     my $qdb = "INSERT INTO $log_table (qid,uid,rec_id,record) VALUES (?,?,?,?)";
-    #print "$qdb -+- ($qid, $uid, $i_id, $log_str)\n";
     $self->app->dbi->do($qdb, undef, $qid, $uid, $i_id, $log_str);
     
 }
@@ -294,18 +293,20 @@ FROM ed
 WHERE query_id=?
 ___
     my $rv = $self->app->dbi->selectrow_hashref( $qdb, undef, $qid );
-    #print "$qdb=$qid\n";
 
     return $rv;
 }
 
 sub get_query_row_array {
-    my ($self, $qdb, $id, $dsn) = @_;
-    
+    my ($self, $qdb, $id, $dsn) = @_;    
     $qdb =~ s/\$ID/\?/;
-    #print "-- $qdb --qdb--\n";
-    return $self->app->dbi($dsn)->selectrow_arrayref( $qdb, undef, $id );
+    my $rv;
+    eval{
+        $rv =  $self->app->dbi($dsn)->selectrow_arrayref( $qdb, undef, $id );
+    };
+    if($@){ $rv->{error} = 'ABORT: '. $@ . "\n $qdb \n ($id)"; }
     
+    return $rv;
 }
 
 sub get_subqueryes { # get subqueryes parameters and data as arrayref of hashref

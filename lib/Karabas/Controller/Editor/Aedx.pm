@@ -47,7 +47,7 @@ sub edit {
     #if(defined $data->{error}){ $c->achtung($data->{error}); return; }
     
     $data->{data} = $c->model($cp->{dsn})->get_query_row_array( $xep->{q_select}, $params->{i}, $cp->{dsn} );
-    if(defined $data->{error}){ $c->achtung($data->{error}); return; }
+    if(ref $data->{data} eq 'HASH'){ $c->err($data->{data}->{error}); return; }
     
     if( defined $var->{subquery} ){
         $data->{sq} = $c->model($cp->{dsn})->get_subqueryes( $cp->{id}, $params->{i}, undef, $cp->{dsn} );
@@ -135,7 +135,7 @@ sub write {
                                                       log         => $log
                                                     );
         
-        if ($var->{debug} || $log_str =~/^ABORT/){ $c->err( $log_str ); return; }
+        if ($var->{debug} || $log_str =~/^ABORT/){ $c->err( $log_str, 1 ); return; }
 
         $i_id = $params->{i};
     }
@@ -157,7 +157,7 @@ sub write {
                                                       log         => $log
                                                     );
         
-        if ($var->{debug} || $log_str =~/^ABORT/){ $c->err( $log_str ); return; }
+        if ($var->{debug} || $log_str =~/^ABORT/){ $c->err( $log_str, 1 ); return; }
 
     }
    
