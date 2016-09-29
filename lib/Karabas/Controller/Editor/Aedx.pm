@@ -1,22 +1,17 @@
 package Karabas::Controller::Editor::Aedx;
-#use lib 'lib';
 use Mojo::Base 'Karabas::Controller::Editor::Base';
 use Mojo::JSON 'from_json';
 
 #use Data::Dumper;
 
-
-sub edit {
+sub get {
     my ($self, $c, $params, $cp) = @_;
     my $var = +{}; my $data = +{};
     
     my($key_column, $editor, $table) = split(/,/,$cp->{editor});
-    #if(!$table){ $c->err('Не указана таблица (3-й параметр поля editor)'); return; }
     
     my $xep = $c->model->get_aedx_params( $cp->{id} );
-    
-    #print Dumper $xep;
-    
+  
     # extract columns from query 'q_select'
     my $cln =$1 if $xep->{q_select} =~ /select(.+?)from.+/igs;
     $cln=~s/as\s\w+[,\s]|distinct//igs;
@@ -42,10 +37,7 @@ sub edit {
     }
     
     $var->{auto_increment} = $c->model($cp->{dsn})->get_auto_increment($table, $cp->{dsn});
-    
-    #$data = $c->model($cp->{dsn})->get_table_row( $table, $key_column, $params->{i}, $cp->{dsn} );
-    #if(defined $data->{error}){ $c->achtung($data->{error}); return; }
-    
+   
     $data->{data} = $c->model($cp->{dsn})->get_query_row_array( $xep->{q_select}, $params->{i}, $cp->{dsn} );
     if(ref $data->{data} eq 'HASH'){ $c->err($data->{data}->{error}); return; }
     
@@ -66,7 +58,7 @@ sub edit {
     return 0;
 }
 
-sub write {
+sub post {
     my ($self, $c, $params, $cp) = @_;
     my $acl = $c->session('acl');
     my $uid = $c->session('id');
@@ -91,7 +83,7 @@ sub write {
     my @qins; my @qdel=(); my @qchk=();    
     if ( defined $xep->{q_insert} ){
         $xep->{q_insert} =~ s/\$ID/$params->{i}/g;
-	    $xep->{q_insert} =~ s/\$MODERID/$uid/g;
+        $xep->{q_insert} =~ s/\$MODERID/$uid/g;
         $xep->{q_insert} =~ s/\$QID/$params->{qid}/g;
         $xep->{q_insert} =~ s/\$MODERID/$uid/g;
         @qins = split( /;[\s\n\r]*/, $xep->{q_insert} ) ;    
@@ -110,12 +102,10 @@ sub write {
     if ( $params->{quetype} eq "1" ){
         
         $xep->{q_update} =~ s/\$ID/$params->{i}/g;
-		my @qupd = split( /;[\s\n\r]*/, $xep->{q_update} );
+        my @qupd = split( /;[\s\n\r]*/, $xep->{q_update} );
         
         my $old_data = $c->model($cp->{dsn})->get_old_query_data($xep->{q_select}, $params->{i}, undef, $cp->{dsn});
 
-        #print "$table, $key_column, $params->{i} ----log = $log----\n";
-        #print Dumper($old_data)."----=--=---".$params->{name};
         if( $cp->{a_update}==0 || ($cp->{a_update}>1 && $acl<3) || ($cp->{a_update}>2 && $acl<4) ){
             $c->err("У вас нет доступа на изменение данных");
             $c->log->warn( "Update attempt is rejected: user:".$c->session('id').", chapter:$cp->{id}" );

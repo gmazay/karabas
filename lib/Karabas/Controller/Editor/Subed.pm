@@ -3,10 +3,7 @@ package Karabas::Controller::Editor::Subed;
 use Mojo::Base 'Karabas::Controller::Editor::Base';
 use Mojo::JSON 'from_json';
 
-#use Data::Dumper;
-
-
-sub edit {
+sub get {
     my ($self, $c, $params, $cp, $data) = @_;
     my $var = +{};
     
@@ -34,7 +31,7 @@ sub edit {
     return 0;
 }
 
-sub write {
+sub post {
     my ($self, $c, $params, $cp, $data) = @_;
     my $acl = $c->session('acl');
     my $uid = $c->session('id');
@@ -82,7 +79,6 @@ sub write {
         my $qdb = $data->{query_s} ? $data->{query_s} : $data->{query};
         my $old_data = $c->model($cp->{dsn})->get_old_query_data( $qdb, $params->{i}, $params->{rid}, $cp->{dsn} );
 
-        #print Dumper($old_data)."$qdb----=--=---".$params->{rid};
         if( $cp->{a_update}==0 || ($cp->{a_update}>1 && $acl<3) || ($cp->{a_update}>2 && $acl<4) ){
             $c->err("You do not have access to update this chapter!");
             $c->log->warn( "Update attempt is rejected: user:".$c->session('id').", chapter:$cp->{id}" );

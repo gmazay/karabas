@@ -5,10 +5,11 @@ use utf8;
 
 use Karabas::Model;
 use Karabas::Controller::Editor;
-#use Data::Dumper;
 
 use POSIX 'locale_h';
 setlocale(LC_CTYPE, 'ru_RU.UTF8');
+
+our $VERSION = 'v0.0.3';
 
 sub startup {
     my $self = shift;
@@ -62,10 +63,6 @@ sub startup {
         }
     );
     
-
-    # Documentation browser under "/perldoc"
-    ##$self->plugin('PODRenderer');
-    
     # Router
     my $r = $self->routes;
     
@@ -73,11 +70,11 @@ sub startup {
     $r->get('/')->to('main#show_main_menu');
     $r->get('/chapter')->to('main#show_chapter');
     $r->any('/auth')->to('auth#auth');
-    $r->any('/edit')->to('editor#edit');
-    $r->post('/write')->to('editor#wr');
-    $r->any('/subed')->to('editor#subedit');
-    $r->post('/subwr')->to('editor#subwrite');
-    $r->any('/xed')->to('editor#xedit');
+    $r->any('/edit')->to('editor#get');
+    $r->post('/write')->to('editor#post');
+    $r->any('/subed')->to('editor#sub_get');
+    $r->post('/subwr')->to('editor#sub_post');
+    $r->any('/xed')->to('editor#x_get');
     
     $r->get('/*')->to('main#achtung');
 }

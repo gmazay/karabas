@@ -30,7 +30,7 @@ sub get_editor {
     return $self->modules->{$editor} || die "Unknown editor '$editor'";
 }
 
-sub edit {
+sub get {
 	my $c = shift;
     unless ( defined $c->session('id') ){ $c->redirect_to('auth'); return; }
   
@@ -39,20 +39,20 @@ sub edit {
     my ($fid,$ed_name) = split(/,/,$cp->{editor});
     if( defined $ed_name && ! grep( $ed_name eq $_, @{$c->cfg->{editors}} ) ){ $c->err("Editor '$ed_name' is not available. Please, check config."); return; }
 	#$ed_name = 'Aed' if !$ed_name;
-    $c->editor($ed_name)->edit($c, $params, $cp);
+    $c->editor($ed_name)->get($c, $params, $cp);
 }
 
-sub wr {
+sub post {
 	my $c = shift;
     unless ( defined $c->session('id') ){ $c->redirect_to('auth'); return; }
 
     my $params = $c->req->body_params->to_hash;
 	my $cp = $c->model->get_chapter_params({id=>$params->{qid}});
     my ($fid,$ed_name) = split(/,/,$cp->{editor});
-    my $data = $c->editor($ed_name)->write($c, $params, $cp);
+    my $data = $c->editor($ed_name)->post($c, $params, $cp);
 }
 
-sub subedit {
+sub sub_get {
 	my $c = shift;
     unless ( defined $c->session('id') ){ $c->redirect_to('auth'); return; }
   
@@ -65,10 +65,10 @@ sub subedit {
     
     if( defined $ed_name && ! grep( $ed_name eq $_, @{$c->cfg->{editors}} ) ){ $c->err("Editor '$ed_name' is not available. Please, check config."); return; }
     
-    $c->editor($ed_name)->edit($c, $params, $cp, $data->[0]);
+    $c->editor($ed_name)->get($c, $params, $cp, $data->[0]);
 }
 
-sub subwrite {
+sub sub_post {
 	my $c = shift;
     unless ( defined $c->session('id') ){ $c->redirect_to('auth'); return; }
   
@@ -81,16 +81,16 @@ sub subwrite {
     
     if( defined $ed_name && ! grep( $ed_name eq $_, @{$c->cfg->{editors}} ) ){ $c->err("Editor '$ed_name' is not available. Please, check config."); return; }
     
-    $c->editor($ed_name)->write($c, $params, $cp, $data->[0]);
+    $c->editor($ed_name)->post($c, $params, $cp, $data->[0]);
 }
 
-sub xedit {
+sub x_get {
 	my $c = shift;
     unless ( defined $c->session('id') ){ $c->redirect_to('auth'); return; }
     my $params = $c->req->params->to_hash;
     my $ed_name = $params->{edn};
     if( defined $ed_name && ! grep( $ed_name eq $_, @{$c->cfg->{editors}} ) ){ $c->err("Editor '$ed_name' is not available. Please, check config."); return; }
-    $c->editor($ed_name)->edit($c, $params);
+    $c->editor($ed_name)->get($c, $params);
 }
 
 sub err {

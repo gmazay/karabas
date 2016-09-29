@@ -125,7 +125,7 @@ sub get_chapter_data {
         $rv->{max_id} = 0;
         while (@row = $sth->fetchrow_array) {
             for $j ( 0 .. $#row){ $rv->{data}->[$i][$j] = $row[$j]; }
-            $rv->{max_id} = $rv->{data}->[$i][0] if $rv->{max_id} < $rv->{data}->[$i][0] ;
+            $rv->{max_id} = $rv->{data}->[$i][0] if $cp->{editor} && $rv->{max_id} < $rv->{data}->[$i][0];
             $i++;
         }
         $sth->finish;

@@ -1,12 +1,8 @@
 package Karabas::Controller::Editor::Aed;
-#use lib 'lib';
 use Mojo::Base 'Karabas::Controller::Editor::Base';
 use Mojo::JSON qw(from_json);
 
-#use Data::Dumper;
-
-
-sub edit {
+sub get {
     my ($self, $c, $params, $cp) = @_;
     my $var = +{};
     
@@ -40,7 +36,7 @@ sub edit {
     return 0;
 }
 
-sub write {
+sub post {
     my ($self, $c, $params, $cp) = @_;
     my $acl = $c->session('acl');
     my $var = +{}; my $i_id = 0; my $log=''; my $log_str='';
@@ -60,14 +56,11 @@ sub write {
     if ($params->{quetype} eq "1"){
         my $old_data = $c->model($cp->{dsn})->get_old_row_data($table, $key_column, $params->{i}, $cp->{dsn});
 
-        #print "$table, $key_column, $params->{i} ----log = $log----\n";
-        #print Dumper($params)."----=--=---".$params->{name};
         if( $cp->{a_update}==0 || ($cp->{a_update}>1 && $acl<3) || ($cp->{a_update}>2 && $acl<4) ){
             $c->achtung("У вас нет доступа на изменение данных");
             $c->log->warn( "Update attempt is rejected: user:".$c->session('id').", chapter:$cp->{id}" );
             return;
-        }
-        
+        }        
         
         $log_str = $c->model($cp->{dsn})->update_table_row(
                                                       table      => $table,

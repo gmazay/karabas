@@ -1,7 +1,7 @@
 package Karabas::Controller::Editor::Help;
 use Mojo::Base 'Karabas::Controller::Editor::Base';
 
-sub edit {
+sub get {
     my ($self, $c, $params) = @_;
 
     my $qdb = "SELECT * FROM query_help WHERE status=1 AND chapter=?";  

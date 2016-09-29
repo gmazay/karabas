@@ -25,6 +25,18 @@ div#f2 {
 <![endif]>
 <![endif]-->
 
+%	if( defined $var->{play} ){
+		<audio controls id='player' style='visibility: hidden;position:absolute;left:400px;top:50px'></audio>
+		<script>
+       function pl(t,n) {
+          t.src='/pic/play_g.png';
+          document.getElementById('player').style.visibility='visible';
+          document.getElementById('player').src='/xed?edn=Media&f='+n;
+          document.getElementById('player').play();
+       }
+   </script>
+% }
+
 %#-------------- Editor call ----------------------------------------{
 <%
 if($cp->{editor}){
@@ -211,6 +223,10 @@ else {
 %       }
 %       elsif( defined $var->{key2val}->{$j} ) {                                                             # key2val
             <td><%== $var->{key2val}->{$j}->{data}->{$value} || '?' %></td>
+%       }
+%       elsif( defined $var->{play}->{$j} && $value ) {                                                      # audio player
+            <td>&nbsp;<img src='/pic/play.png' title='Послушать' onclick="pl(this,'<%=$value%>')" style='cursor:pointer'> &nbsp;&nbsp;&nbsp;
+            <a href='/xed?edn=Media&download=1&f=<%=$value%>'><img src='/pic/dwld.png' title='Скачать' style='cursor:pointer'></a></td>
 %       }
 %       else {
             <td><%== $value %></td>
