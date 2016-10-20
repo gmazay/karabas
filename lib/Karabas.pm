@@ -9,12 +9,13 @@ use Karabas::Controller::Editor;
 use POSIX 'locale_h';
 setlocale(LC_CTYPE, 'ru_RU.UTF8');
 
-our $VERSION = 'v0.0.3';
+our $VERSION = 'v0.0.4';
 
 sub startup {
     my $self = shift;
   
-    my $cfg = $self->plugin( 'Config' => {file => 'etc/karabas.conf'} );
+    my $config_file = $ENV{karabas_config} || 'etc/karabas.conf';
+    my $cfg = $self->plugin( 'Config' => {file => $config_file} );    
     $self->helper(
         cfg => sub {
             my ($self) = @_;
