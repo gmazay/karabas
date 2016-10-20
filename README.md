@@ -30,6 +30,11 @@ cd karabas
 hypnotoad script/karabas  # production server
 или
 morbo script/karabas      # development server
+
+
+По умолчанию путь к конфиг-файлу такой: etc/karabas.conf
+Если возникнет потребность его изменить, нужно будет написать стартовый скрипт, и в нем, перед запуском,
+задать переменную окружения: \$ENV{karabas_config}
 ```
 
 **Вход:**
