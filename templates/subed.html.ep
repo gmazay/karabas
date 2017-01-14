@@ -90,7 +90,7 @@ sub _print_subtable {
 				$str.="<td bgcolor='#ffffff'>&nbsp;</td>";
 			}
 			elsif( defined  $var->{select_fields}->{$cnr[$j]} ){
-				my $ag = select_field( $var->{select_fields}->{$cnr[$j]}, $cn[$j], $row->[$j]);
+				my $ag = select_field( $var->{select_fields}->{$cnr[$j]}, $cnr[$j], $row->[$j]);
 				$str.="<td bgcolor='#ffffff'>$ag</td>";
 				next;
 			}
